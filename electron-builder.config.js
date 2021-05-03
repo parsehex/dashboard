@@ -1,9 +1,6 @@
 require('dotenv').config();
 
-// const now = new Date();
-// const buildVersion = `${now.getFullYear() - 2000}.${
-// 	now.getMonth() + 1
-// }.${now.getDate()}`;
+const pkg = require('./package.json');
 
 /**
  * @type {import('electron-builder').Configuration}
@@ -22,11 +19,12 @@ const config = {
 	},
 	files: ['packages/**/dist/**'],
 	extraMetadata: {
-		// version: buildVersion,
+		version: pkg.version,
 	},
 	publish: {
 		provider: 'github',
 		private: true,
+		token: process.env.GH_TOKEN,
 	},
 };
 

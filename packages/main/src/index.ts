@@ -2,11 +2,7 @@ import { app, BrowserWindow } from 'electron';
 import { join } from 'path';
 import { URL } from 'url';
 // import Chalk from 'chalk';
-import { autoUpdater } from 'electron-updater';
-
-// console.log(autoUpdater);
-
-console.log(`Dashboard v${autoUpdater.currentVersion.version}`);
+import logger from 'electron-log';
 
 const isSingleInstance = app.requestSingleInstanceLock();
 
@@ -85,11 +81,17 @@ app
 	.then(createWindow)
 	.catch((e) => console.error('Failed create window:', e));
 
-// Auto-updates
-if (env.PROD) {
-	app
-		.whenReady()
-		.then(() => import('electron-updater'))
-		.then(({ autoUpdater }) => autoUpdater.checkForUpdatesAndNotify())
-		.catch((e) => console.error('Failed check updates:', e));
-}
+(async () => {
+	if (!env.PROD) return;
+	await app.whenReady();
+
+	const { autoUpdater } = await import('electron-updater');
+	autoUpdater.logger = logger;
+
+	console.log(`Dashboard v${autoUpdater.currentVersion.version}`);
+	try {
+		await autoUpdater.checkForUpdatesAndNotify();
+	} catch (e) {
+		console.error('Failed update check:', e);
+	}
+})();
