@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 const now = new Date();
 const buildVersion = `${now.getFullYear() - 2000}.${
 	now.getMonth() + 1
