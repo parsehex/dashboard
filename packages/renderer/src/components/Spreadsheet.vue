@@ -45,7 +45,7 @@ export default defineComponent({
 		});
 	},
 	methods: {
-		handleInput($event: InputEvent) {
+		handleInput($event: Event) {
 			this.$emit('update:sheet', ($event.target as HTMLSelectElement).value);
 		},
 	},
