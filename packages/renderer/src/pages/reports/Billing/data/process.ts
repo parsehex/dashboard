@@ -1,27 +1,15 @@
 import { format } from 'date-fns';
-// import type { TherapyNotesRow } from '@/types/file-data/therapy-notes';
 import { loadSpreadsheetFile } from '@/lib/io';
 import { newDateFromExcel, uniqObjectArray } from '@/lib/utils';
-// import { perfMark, perfMeasure } from '@/lib/devtools';
 
 export default async function processTherapyNotesData(
-	buffers: ArrayBuffer[],
-	priorData?: TherapyNotesRow[]
+	file: string
 ) {
-	// perfMark('pTND_start');
-
-	let sheet: TherapyNotesRow[] = [];
-	if (priorData) sheet.push(...priorData);
-
-	for (const buffer of buffers) {
-		sheet.push(
-			...loadSpreadsheetFile<TherapyNotesRow>({
-				buffer,
-				sheetName: 'Billing Transactions',
-				sort: 'Date',
-			})
-		);
-	}
+	const sheet: TherapyNotesRow[] = await loadSpreadsheetFile<TherapyNotesRow>({
+		file,
+		sheetName: 'Billing Transactions',
+		sort: 'Date',
+	});
 
 	// add ids to rows
 	for (const row of sheet) {
@@ -29,9 +17,7 @@ export default async function processTherapyNotesData(
 		row['ID'] = id;
 	}
 
-	sheet = uniqObjectArray(sheet, 'ID');
-
-	return sheet;
+	return uniqObjectArray(sheet, 'ID');
 }
 
 function makeID(row: TherapyNotesRow) {

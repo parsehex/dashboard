@@ -8,7 +8,7 @@
 				{{ branch.text }}
 			</span>
 			<tree-view
-				v-if="expanded && branch?.children?.length > 0"
+				v-if="expanded && branch?.children && branch.children.length > 0"
 				:id="id + '/' + branch.id"
 				class="branch"
 				:tree="branch.children || []"

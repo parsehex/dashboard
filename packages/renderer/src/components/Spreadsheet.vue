@@ -1,6 +1,6 @@
 <template>
 	Sheet:
-	<select @input="$emit('update:sheet', $event.target.value)">
+	<select @input="handleInput">
 		<option v-for="s in sheets" :key="s">{{ s }}</option>
 	</select>
 	<div ref="table" />
@@ -43,6 +43,11 @@ export default defineComponent({
 			autoColumns: true,
 			// reactiveData: true,
 		});
+	},
+	methods: {
+		handleInput($event: InputEvent) {
+			this.$emit('update:sheet', ($event.target as HTMLSelectElement).value);
+		},
 	},
 });
 </script>

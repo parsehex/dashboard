@@ -14,7 +14,7 @@
 		<div v-if="actions?.length > 0" class="card-body">
 			<a
 				v-for="a in actions"
-				:key="a"
+				:key="a.label"
 				href="#"
 				class="card-link"
 				@click="a.callback"

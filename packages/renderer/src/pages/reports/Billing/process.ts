@@ -18,7 +18,7 @@ interface TotalsRow {
 }
 export type Report = { Employees: EmployeeRow[]; Totals: TotalsRow[] };
 
-export default async function (input: string) {
+export default async function (input: string): Promise<Report> {
 	const { readFile } = useElectron();
 	const data = await readFile(input);
 	const wb = xlsx.read(data, { type: 'array' });
@@ -26,5 +26,5 @@ export default async function (input: string) {
 
 	const report = {};
 
-	return report;
+	return report as Report;
 }

@@ -1,6 +1,4 @@
-// import { perfMark, perfMeasure } from '@/lib/devtools';
 import { newDateFromExcel } from '@/lib/utils';
-// import type { TherapyNotesRow } from '@/types/file-data/therapy-notes';
 
 export interface Appointment {
 	/** Appointment Type */
@@ -39,8 +37,6 @@ export interface Balance {
 }
 
 export function parseAppointments(data: TherapyNotesRow[]): Appointment[] {
-	// perfMark('pA_start');
-
 	const results: Appointment[] = [];
 
 	for (const row of data) {
@@ -68,7 +64,7 @@ export function parseAppointments(data: TherapyNotesRow[]): Appointment[] {
 		else if (serviceCode === '90832') expected = 40;
 
 		results.push({
-			apptID: row['ID'],
+			apptID: row['ID'] as string,
 			type: row['Appointment Type'],
 			clinician: row['Clinician Name'],
 			date: newDateFromExcel(row.Date),
