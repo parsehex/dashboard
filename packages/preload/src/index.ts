@@ -1,4 +1,8 @@
 import { contextBridge } from 'electron';
+import remote from '@electron/remote';
+import * as fs from 'fs-extra';
+
+const { dialog } = remote;
 
 const apiKey = 'electron';
 /**
@@ -6,6 +10,9 @@ const apiKey = 'electron';
  */
 const api: ElectronApi = {
 	versions: process.versions,
+	dialog,
+	readFile: fs.readFile,
+	writeFile: fs.writeFile,
 };
 
 if (import.meta.env.MODE !== 'test') {

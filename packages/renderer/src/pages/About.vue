@@ -1,17 +1,17 @@
 <template>
-  <h2 id="versions">
-    Lib versions
-  </h2>
-  <div>
-    <ul aria-labelledby="versions">
-      <li
-        v-for="(version, lib) in versions"
-        :key="lib"
-      >
-        <strong>{{ lib }}</strong>: v{{ version }}
-      </li>
-    </ul>
-  </div>
+	<h2 id="versions">
+		Lib versions
+	</h2>
+	<div>
+		<ul aria-labelledby="versions">
+			<li
+				v-for="(version, lib) in versions"
+				:key="lib"
+			>
+				<strong>{{ lib }}</strong>: v{{ version }}
+			</li>
+		</ul>
+	</div>
 </template>
 
 <script lang="ts">

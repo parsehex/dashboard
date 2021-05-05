@@ -1,12 +1,11 @@
 /* eslint-env node */
 
-import {chrome} from '../../electron-vendors.config.json';
-import {join} from 'path';
+import { chrome } from '../../electron-vendors.config.json';
+import { join } from 'path';
 import { builtinModules } from 'module';
-import {defineConfig} from 'vite';
+import { defineConfig } from 'vite';
 import vue from '@vitejs/plugin-vue';
-import {loadAndSetEnv} from '../../scripts/loadAndSetEnv.mjs';
-
+import { loadAndSetEnv } from '../../scripts/loadAndSetEnv.mjs';
 
 const PACKAGE_ROOT = __dirname;
 
@@ -16,38 +15,34 @@ const PACKAGE_ROOT = __dirname;
  */
 loadAndSetEnv(process.env.MODE, process.cwd());
 
-
 /**
  * @see https://vitejs.dev/config/
  */
 export default defineConfig({
-  root: PACKAGE_ROOT,
-  resolve: {
-    alias: {
-      '/@/': join(PACKAGE_ROOT, 'src') + '/',
-    },
-  },
-  plugins: [vue()],
-  base: '',
-  build: {
-    sourcemap: true,
-    target: `chrome${chrome}`,
-    polyfillDynamicImport: false,
-    outDir: 'dist',
-    assetsDir: '.',
-    terserOptions: {
-      ecma: 2020,
-      compress: {
-        passes: 2,
-      },
-      safari10: false,
-    },
-    rollupOptions: {
-      external: [
-        ...builtinModules,
-      ],
-    },
-    emptyOutDir: true,
-  },
+	root: PACKAGE_ROOT,
+	resolve: {
+		alias: {
+			'@/': join(PACKAGE_ROOT, 'src') + '/',
+		},
+	},
+	plugins: [vue()],
+	base: '',
+	build: {
+		sourcemap: true,
+		target: `chrome${chrome}`,
+		polyfillDynamicImport: false,
+		outDir: 'dist',
+		assetsDir: '.',
+		terserOptions: {
+			ecma: 2020,
+			compress: {
+				passes: 2,
+			},
+			safari10: false,
+		},
+		rollupOptions: {
+			external: [...builtinModules],
+		},
+		emptyOutDir: true,
+	},
 });
-

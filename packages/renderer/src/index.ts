@@ -1,7 +1,6 @@
-import {createApp} from 'vue';
-import App from '/@/App.vue';
-import router from '/@/router';
+import 'bootstrap';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'tabulator-tables/dist/css/tabulator.min.css';
+import { setupVue } from '@/lib/vue';
 
-createApp(App)
-  .use(router)
-  .mount('#app');
+setupVue('#app');

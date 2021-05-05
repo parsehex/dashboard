@@ -26,7 +26,9 @@
   "rules": {
     "@typescript-eslint/no-unused-vars": "error",
     "@typescript-eslint/no-var-requires": "off",
-    "@typescript-eslint/consistent-type-imports": "error",
+
+    // declaration files need to be able to break this rule
+    "@typescript-eslint/consistent-type-imports": "off",
 
   /**
    * Having a semicolon helps the optimizer interpret your code correctly.
@@ -42,7 +44,7 @@
      */
     "comma-dangle": [
       "warn",
-      "always-multiline"
+      "only-multiline"
     ],
     /**
      * Just for beauty
@@ -51,6 +53,12 @@
       "warn", "single"
     ],
     "no-mixed-spaces-and-tabs": "off",
-    "@typescript-eslint/no-explicit-any": "off"
+    "@typescript-eslint/no-explicit-any": "off",
+    "@typescript-eslint/explicit-module-boundary-types": "off",
+    "@typescript-eslint/ban-ts-comment": "off",
+    "@typescript-eslint/no-non-null-assertion": "off",
+
+    // fixes eslint not picking up ambient types
+    "no-undef": "off"
   }
 }

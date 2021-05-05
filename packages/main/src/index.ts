@@ -3,6 +3,7 @@ import { join } from 'path';
 import { URL } from 'url';
 // import Chalk from 'chalk';
 import logger from 'electron-log';
+require('@electron/remote/main').initialize();
 
 const isSingleInstance = app.requestSingleInstanceLock();
 
@@ -23,7 +24,7 @@ if (env.MODE === 'development') {
 				loadExtensionOptions: {
 					allowFileAccess: true,
 				},
-			}),
+			})
 		)
 		.catch((e) => console.error('Failed install extension:', e));
 }
@@ -33,10 +34,12 @@ let mainWindow: BrowserWindow | null = null;
 const createWindow = async () => {
 	mainWindow = new BrowserWindow({
 		show: true,
+		width: 800,
+		height: 600,
 		webPreferences: {
 			preload: join(__dirname, '../../preload/dist/index.cjs'),
 			contextIsolation: env.MODE !== 'test', // Spectron tests can't work with contextIsolation: true
-			enableRemoteModule: env.MODE === 'test', // Spectron tests can't work with enableRemoteModule: false
+			enableRemoteModule: true, // Spectron tests can't work with enableRemoteModule: false
 		},
 	});
 
@@ -50,12 +53,12 @@ const createWindow = async () => {
 			? env.VITE_DEV_SERVER_URL
 			: new URL(
 					'../renderer/dist/index.html',
-					'file://' + __dirname,
+					'file://' + __dirname
 			  ).toString();
 
 	if (env.MODE === 'development') {
 		mainWindow.webContents.once('dom-ready', () =>
-			mainWindow?.webContents.openDevTools(),
+			mainWindow?.webContents.openDevTools()
 		);
 	}
 
