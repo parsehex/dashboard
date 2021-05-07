@@ -2,7 +2,6 @@
 
 import { chrome } from '../../electron-vendors.config.json';
 import { join } from 'path';
-import { builtinModules } from 'module';
 import { defineConfig } from 'vite';
 import vue from '@vitejs/plugin-vue';
 import { loadAndSetEnv } from '../../scripts/loadAndSetEnv.mjs';
@@ -33,16 +32,18 @@ export default defineConfig({
 		polyfillDynamicImport: false,
 		outDir: 'dist',
 		assetsDir: '.',
+		minify: false,
 		terserOptions: {
 			ecma: 2020,
-			compress: {
-				passes: 2,
-			},
+			compress: false,
 			safari10: false,
 		},
-		rollupOptions: {
-			external: [...builtinModules],
-		},
+		// i don't think this was right:
+		// rollupOptions: {
+		// 	external: [...builtinModules],
+		// },
+		// i mean, the built in modules aren't available to the renderer
+		// + was breaking build
 		emptyOutDir: true,
 	},
 });
