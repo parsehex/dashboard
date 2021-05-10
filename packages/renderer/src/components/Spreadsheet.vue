@@ -1,9 +1,18 @@
 <template>
-	Sheet:
-	<select @input="handleInput">
-		<option v-for="s in sheets" :key="s">{{ s }}</option>
-	</select>
-	<div ref="table" />
+	<div class="spreadsheet">
+		<span
+			v-for="s in sheets"
+			:key="s"
+			:class="{
+				sheet: true,
+				active: sheet === s,
+			}"
+			@click="changeSheet(s)"
+		>
+			{{ s }}
+		</span>
+		<div ref="table" />
+	</div>
 </template>
 
 <script lang="ts">
@@ -41,20 +50,37 @@ export default defineComponent({
 			layout: 'fitColumns',
 			autoResize: true,
 			autoColumns: true,
-			// reactiveData: true,
 		});
 	},
 	methods: {
-		handleInput($event: Event) {
-			this.$emit('update:sheet', ($event.target as HTMLSelectElement).value);
+		changeSheet(sheet: string) {
+			this.$emit('update:sheet', sheet);
 		},
 	},
 });
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
-a {
-	color: #42b983;
+<style lang="scss">
+.spreadsheet {
+	.sheet {
+		padding: 6px;
+		border: 1px solid gray;
+		margin-bottom: 2px;
+		cursor: pointer;
+		display: inline-block;
+
+		&:first-of-type {
+			border-top-left-radius: 5px;
+			border-bottom-left-radius: 5px;
+		}
+		&:last-of-type {
+			border-top-right-radius: 5px;
+			border-bottom-right-radius: 5px;
+		}
+
+		&.active {
+			font-weight: bold;
+		}
+	}
 }
 </style>
