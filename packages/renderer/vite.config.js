@@ -32,10 +32,10 @@ export default defineConfig({
 		polyfillDynamicImport: false,
 		outDir: 'dist',
 		assetsDir: '.',
-		minify: false,
+		minify: true,
 		terserOptions: {
 			ecma: 2020,
-			compress: false,
+			compress: true,
 			safari10: false,
 		},
 		// i don't think this was right:
