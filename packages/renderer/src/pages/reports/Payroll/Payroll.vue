@@ -2,8 +2,8 @@
 	Choose a Payroll History file:
 	<select v-model="option">
 		<option value="pick">Browse...</option>
-		<option v-for="o in hist" :key="o">
-			{{ o }}
+		<option v-for="o in fileHistory" :key="o.value" :value="o.value">
+			{{ o.label }}
 		</option>
 	</select>
 	<btn type="primary" @click="go">Go</btn>
@@ -25,6 +25,7 @@ import processPayroll from './process';
 import Spreadsheet from '@/components/Spreadsheet.vue';
 import Chart from '@/components/Chart.vue';
 import type { ChartData, ChartTypeRegistry } from 'chart.js';
+import { useElectron } from '@/lib/use-electron';
 
 export default defineComponent({
 	name: 'Payroll',
@@ -32,7 +33,7 @@ export default defineComponent({
 	data: () => {
 		const hist = recentlyOpenedFiles();
 		return {
-			option: hist[hist.length - 1],
+			option: '',
 			file: '',
 			hist,
 			loaded: false,
@@ -44,6 +45,14 @@ export default defineComponent({
 		};
 	},
 	computed: {
+		fileHistory() {
+			const { path } = useElectron();
+			const hist: string[] = this.hist;
+			return hist.map((f) => {
+				const p = path.parse(f);
+				return { value: f, label: p.base };
+			});
+		},
 		chart(): {
 			data: ChartData;
 			type: keyof ChartTypeRegistry;
@@ -77,6 +86,10 @@ export default defineComponent({
 			};
 			return { data, type: 'bar', title: 'Payroll hours by Admin vs Clin' };
 		},
+	},
+	mounted() {
+		if (this.fileHistory.length === 0) return;
+		this.option = this.fileHistory[this.fileHistory.length - 1].value;
 	},
 	methods: {
 		async go() {

@@ -1,6 +1,7 @@
 import { contextBridge } from 'electron';
 import remote from '@electron/remote';
 import * as fs from 'fs-extra';
+import * as path from 'path';
 
 const { dialog } = remote;
 
@@ -13,6 +14,7 @@ const api: ElectronApi = {
 	dialog,
 	readFile: fs.readFile,
 	writeFile: fs.writeFile,
+	path,
 };
 
 if (import.meta.env.MODE !== 'test') {
