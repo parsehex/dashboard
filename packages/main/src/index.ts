@@ -1,6 +1,7 @@
 import { app, BrowserWindow } from 'electron';
 import { join } from 'path';
 import { URL } from 'url';
+import Store from 'electron-store';
 // import Chalk from 'chalk';
 import logger from 'electron-log';
 require('@electron/remote/main').initialize();
@@ -29,19 +30,45 @@ if (env.MODE === 'development') {
 		.catch((e) => console.error('Failed install extension:', e));
 }
 
+interface AppStore {
+	window: {
+		width: number;
+		height: number;
+		x: number;
+		y: number;
+		maximized: boolean;
+	};
+}
+
+const store = new Store<AppStore>({
+	defaults: {
+		window: {
+			x: 0,
+			y: 0,
+			width: 800,
+			height: 600,
+			maximized: false,
+		},
+	},
+});
 let mainWindow: BrowserWindow | null = null;
 
 const createWindow = async () => {
+	const winSettings = store.get('window');
+
 	mainWindow = new BrowserWindow({
 		show: true,
-		width: 800,
-		height: 600,
+		width: winSettings.width,
+		height: winSettings.height,
+		x: winSettings.x,
+		y: winSettings.y,
 		webPreferences: {
 			preload: join(__dirname, '../../preload/dist/index.cjs'),
 			contextIsolation: env.MODE !== 'test', // Spectron tests can't work with contextIsolation: true
 			enableRemoteModule: true, // Spectron tests can't work with enableRemoteModule: false
 		},
 	});
+	if (winSettings.maximized) mainWindow.maximize();
 
 	/**
 	 * URL for main window.
@@ -62,16 +89,10 @@ const createWindow = async () => {
 		);
 	}
 
+	setupWindowEvents();
+
 	await mainWindow.loadURL(pageUrl as string);
 };
-
-app.on('second-instance', () => {
-	// Someone tried to run a second instance, we should focus our window.
-	if (mainWindow) {
-		if (mainWindow.isMinimized()) mainWindow.restore();
-		mainWindow.focus();
-	}
-});
 
 app.on('window-all-closed', () => {
 	if (process.platform !== 'darwin') {
@@ -79,12 +100,15 @@ app.on('window-all-closed', () => {
 	}
 });
 
-app
-	.whenReady()
-	.then(createWindow)
-	.catch((e) => console.error('Failed create window:', e));
-
 (async () => {
+	await app.whenReady();
+
+	try {
+		await createWindow();
+	} catch (e) {
+		console.error('Failed to create window:', e);
+	}
+
 	if (!env.PROD) return;
 	await app.whenReady();
 
@@ -98,3 +122,25 @@ app
 		console.error('Failed update check:', e);
 	}
 })();
+
+function setupWindowEvents() {
+	if (!mainWindow) return;
+
+	let resizeWaiting = false;
+	mainWindow.on('resize', () => {
+		if (resizeWaiting) return;
+		setTimeout(async () => {
+			const newBounds = mainWindow?.getBounds();
+			store.set('window', {
+				...newBounds,
+				maximized: store.get('window.maximized', false),
+			});
+			resizeWaiting = false;
+		}, 750);
+	});
+
+	mainWindow.on('maximize', () => {
+		const maximized = mainWindow?.isMaximized();
+		store.set('window.maximized', maximized);
+	});
+}
