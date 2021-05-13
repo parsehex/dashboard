@@ -40,7 +40,7 @@ export default defineConfig({
 		},
 		// i don't think this was right:
 		// rollupOptions: {
-		// 	external: [...builtinModules],
+		// external: [...builtinModules],
 		// },
 		// i mean, the built in modules aren't available to the renderer
 		// + was breaking build
