@@ -1,6 +1,6 @@
 import xlsx from 'xlsx';
 import { useElectron } from '@/lib/use-electron';
-import { inObj } from '@/lib/utils';
+import { colDef, inObj } from '@/lib/utils';
 
 interface EmployeeRow {
 	Name: string;
@@ -18,6 +18,32 @@ interface TotalsRow {
 	Gross: number;
 }
 export type Report = { Employees: EmployeeRow[]; Totals: TotalsRow[] };
+
+export const Columns = {
+	Employees: [
+		colDef('Name'),
+		colDef('Admin'),
+		colDef('Admin %', {
+			sorter: 'number',
+		}),
+		colDef('Clin'),
+		colDef('Clin %', {
+			sorter: 'number',
+		}),
+		colDef('Total Hrs'),
+		colDef('Gross', {
+			formatter: 'money',
+		}),
+	],
+	Totals: [
+		colDef('Period'),
+		colDef('Admin'),
+		colDef('Clin'),
+		colDef('Gross', {
+			formatter: 'money',
+		}),
+	],
+};
 
 export default async function (input: string): Promise<Report> {
 	const { readFile } = useElectron();

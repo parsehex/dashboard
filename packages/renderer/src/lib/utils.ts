@@ -106,3 +106,36 @@ export function inObj<O extends GenericObject>(obj: O, key: string) {
 export function pad(n: string | number, w: number, fillString = '0') {
 	return n.toString().padStart(w, fillString);
 }
+
+interface TabulatorColumnDefinition {
+	field: string;
+	title: string;
+	formatter?: string;
+	formatterParams?: any;
+	sorter?: string;
+}
+/**
+ * Returns an object that can be given to Tabulator's `columns` option.
+ *
+ * By default:
+ * - formatter is 'plaintext'
+ * - if formatter is 'money', than '$' is prepended
+ * - if no title is set, then value from field is used as default
+ */
+export function colDef(
+	field: string,
+	{ formatter, sorter, title }: Partial<TabulatorColumnDefinition> = {}
+) {
+	if (!title) title = field;
+
+	const def: TabulatorColumnDefinition = { field, title };
+	if (formatter) {
+		def.formatter = formatter;
+		def.formatterParams = {
+			symbol: '$',
+		};
+	}
+	if (sorter) def.sorter = sorter;
+
+	return def;
+}

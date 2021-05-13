@@ -1,17 +1,22 @@
 <template>
 	<div class="spreadsheet">
-		<span
-			v-for="s in sheets"
-			:key="s"
-			:class="{
-				sheet: true,
-				active: sheet === s,
-			}"
-			@click="changeSheet(s)"
-		>
-			{{ s }}
-		</span>
 		<div ref="table" />
+		<div class="controls">
+			<ul class="sheets">
+				<li
+					v-for="s in sheets"
+					:key="s"
+					:class="{
+						sheet: true,
+						active: sheet === s,
+					}"
+					@click="changeSheet(s)"
+				>
+					{{ s }}
+				</li>
+			</ul>
+			<btn type="success" @click.capture="download">Download All Sheets</btn>
+		</div>
 	</div>
 </template>
 
@@ -19,13 +24,24 @@
 import type { PropType } from 'vue';
 import { computed, defineComponent } from 'vue';
 import Tabulator from 'tabulator-tables';
+import xlsx from 'xlsx';
+import { saveFile } from '@/lib/io';
+import { Columns } from '@/pages/reports/Payroll/process';
 
+interface Cols {
+	[sheetName: string]: typeof Columns.Employees;
+}
 export default defineComponent({
 	name: 'Spreadsheet',
 	props: {
 		data: { type: Object as PropType<SpreadsheetData>, required: true },
+		columns: { type: Object as PropType<Cols>, required: true },
 		sheet: {
 			type: String as PropType<keyof SpreadsheetData>,
+			required: true,
+		},
+		fileName: {
+			type: String,
 			required: true,
 		},
 	},
@@ -39,6 +55,7 @@ export default defineComponent({
 	}),
 	updated() {
 		this.table?.clearData();
+		this.table?.setColumns(this.columns[this.sheet]);
 		this.table?.setData(this.data[this.sheet]);
 		this.table?.redraw(true);
 	},
@@ -47,14 +64,29 @@ export default defineComponent({
 		this.table = new Tabulator(table, {
 			maxHeight: Math.floor(window.innerHeight / 2) - table.offsetTop, // this enables the Virtual DOM
 			data: this.data[this.sheet],
+			columns: this.columns[this.sheet],
 			layout: 'fitColumns',
 			autoResize: true,
-			autoColumns: true,
 		});
 	},
 	methods: {
 		changeSheet(sheet: string) {
 			this.$emit('update:sheet', sheet);
+		},
+		async download() {
+			const wb = xlsx.utils.book_new();
+
+			const sheetNames = Object.keys(this.data);
+			const reports = Object.values(this.data);
+			for (let i = 0; i < reports.length; i++) {
+				const r = reports[i];
+
+				const sheet = xlsx.utils.json_to_sheet(r);
+				xlsx.utils.book_append_sheet(wb, sheet, sheetNames[i]);
+			}
+
+			const d = xlsx.write(wb, { bookType: 'xlsx', type: 'file' });
+			await saveFile(d, this.fileName);
 		},
 	},
 });
@@ -62,18 +94,37 @@ export default defineComponent({
 
 <style lang="scss">
 .spreadsheet {
-	.sheet {
+	.controls {
+		display: flex;
+		flex-direction: row;
+		justify-content: space-between;
+
+		.btn {
+			height: 100%;
+		}
+	}
+
+	.sheets {
+		list-style-type: none;
+		padding: 0;
+	}
+
+	ul.sheets li.sheet {
 		padding: 6px;
 		border: 1px solid gray;
+		border-top-width: 0;
+		border-right-width: 0;
 		margin-bottom: 2px;
 		cursor: pointer;
 		display: inline-block;
+		user-select: none;
 
 		&:first-of-type {
 			border-top-left-radius: 5px;
 			border-bottom-left-radius: 5px;
 		}
 		&:last-of-type {
+			border-right-width: 1px;
 			border-top-right-radius: 5px;
 			border-bottom-right-radius: 5px;
 		}

@@ -53,7 +53,7 @@ export default defineComponent({
 <style lang="scss">
 ul.tree-view {
 	list-style-type: none;
-	// padding-left: 20px;
+	padding-left: 20px;
 	display: flex;
 	flex-direction: column;
 	align-items: start;

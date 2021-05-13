@@ -1,9 +1,5 @@
 <template>
 	<div class="chart-container">
-		<div class="controls">
-			Export: <btn type="success">This Chart</btn>
-			<btn type="success">Add chart to export</btn>
-		</div>
 		<div class="chart">
 			<canvas ref="chart" />
 		</div>
@@ -25,6 +21,7 @@ import type {
 	ChartConfiguration,
 	Chart as C,
 } from 'chart.js';
+import { chartToBuffer, saveFile } from '@/lib/io';
 
 export default defineComponent({
 	name: 'Chart',
@@ -48,10 +45,11 @@ export default defineComponent({
 		this.createChart();
 	},
 	methods: {
-		export() {
-			//
+		async download() {
+			const image = await chartToBuffer(this.chart);
+			await saveFile(image, 'chart.png');
 		},
-		exportAdd() {
+		addToPDF() {
 			state.chartsToExport.push(this.chartConfig);
 		},
 		createChart() {
@@ -95,5 +93,7 @@ export default defineComponent({
 .chart-container {
 	max-height: 50vh;
 	position: relative;
+	// border: 1px solid;
+	// border-radius: 3px;
 }
 </style>

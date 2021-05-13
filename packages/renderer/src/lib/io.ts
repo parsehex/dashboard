@@ -1,7 +1,19 @@
+import type { Chart } from 'chart.js';
 import * as xlsx from 'xlsx';
 import { useElectron } from './use-electron';
 
 const LS_KEY = 'file-history';
+export const FileFilters: { [ext: string]: Electron.FileFilter } = {
+	png: { name: 'PNG files', extensions: ['png'] },
+	xlsx: { name: 'XLSX files', extensions: ['xlsx'] },
+};
+
+export async function chartToBuffer(chart: Chart) {
+	const url = chart.toBase64Image('image/png', 1);
+	const response = await fetch(url);
+	const file = await response.arrayBuffer();
+	return useElectron().bufferFrom(file);
+}
 
 export function recentlyOpenedFiles(): string[] {
 	const ls = localStorage.getItem(LS_KEY);
@@ -23,11 +35,13 @@ export async function pickFile(remember?: boolean) {
 	}
 	return f.filePaths[0];
 }
-export async function saveFile(d: Buffer) {
-	const { dialog, writeFile } = useElectron();
-	const f = await dialog.showSaveDialog({
-		filters: [{ name: 'Excel files', extensions: ['xlsx'] }],
-		defaultPath: 'Payroll Hours Breakdown.xlsx',
+export async function saveFile(d: Buffer, fileName: string) {
+	const { writeFile, ipcRenderer } = useElectron();
+	const ext = fileName.split('.').slice(-1).join();
+	const fileFilter = FileFilters[ext];
+	const f = await ipcRenderer.invoke('save-as', {
+		filters: [fileFilter],
+		defaultPath: fileName,
 	});
 	if (f.canceled || !f.filePath) return false;
 
