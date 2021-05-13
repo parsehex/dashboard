@@ -1,4 +1,4 @@
-import { contextBridge } from 'electron';
+import { contextBridge, ipcRenderer } from 'electron';
 import remote from '@electron/remote';
 import * as fs from 'fs-extra';
 import * as path from 'path';
@@ -15,6 +15,8 @@ const api: ElectronApi = {
 	readFile: fs.readFile,
 	writeFile: fs.writeFile,
 	path,
+	ipcRenderer,
+	bufferFrom: Buffer.from.bind(Buffer),
 };
 
 if (import.meta.env.MODE !== 'test') {

@@ -7,6 +7,10 @@
 		<div class="chart">
 			<canvas ref="chart" />
 		</div>
+		<div class="controls">
+			<btn type="success" @click="download">Download Chart</btn>
+			<btn type="success" @click="addToPDF">Add chart to PDF</btn>
+		</div>
 	</div>
 </template>
 

@@ -1,4 +1,4 @@
-import { app, BrowserWindow } from 'electron';
+import { app, BrowserWindow, ipcMain, dialog } from 'electron';
 import { join } from 'path';
 import { URL } from 'url';
 import Store from 'electron-store';
@@ -52,6 +52,13 @@ const store = new Store<AppStore>({
 	},
 });
 let mainWindow: BrowserWindow | null = null;
+
+ipcMain.handle(
+	'save-as',
+	async (event, options: Electron.SaveDialogOptions) => {
+		return await dialog.showSaveDialog(mainWindow as BrowserWindow, options);
+	}
+);
 
 const createWindow = async () => {
 	const winSettings = store.get('window');
