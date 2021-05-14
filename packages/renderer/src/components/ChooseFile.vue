@@ -24,7 +24,7 @@ export default defineComponent({
 			required: true,
 		},
 	},
-	emits: ['update:file'],
+	emits: ['pick-file'],
 	data: () => ({
 		hist: recentlyOpenedFiles(),
 		option: '',
@@ -52,7 +52,7 @@ export default defineComponent({
 				file = this.option;
 			}
 			this.hist = recentlyOpenedFiles();
-			this.$emit('update:file', file);
+			this.$emit('pick-file', file);
 		},
 	},
 });

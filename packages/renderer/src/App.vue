@@ -4,7 +4,7 @@
 			<column class="nav col-3">
 				<app-navigation />
 			</column>
-			<column class="col-9">
+			<column class="page col-9">
 				<router-view />
 			</column>
 		</row>
@@ -30,6 +30,27 @@ export default defineComponent({
 	text-align: center;
 	color: #2c3e50;
 	/* margin-top: 60px; */
+
+	.page {
+		height: 100vh;
+
+		.content {
+			height: 100%;
+			display: flex;
+			flex-direction: column;
+
+			& > :last-child:not(:first-child) {
+				flex-grow: 1;
+
+				display: flex;
+				flex-direction: column;
+
+				& > :last-child {
+					flex-grow: 1;
+				}
+			}
+		}
+	}
 }
 .btn-group-xs > .btn,
 .btn-xs {

@@ -1,45 +1,66 @@
 import { format } from 'date-fns';
-// import type { TableDataObject } from '@/types/components';
 import type { Appointment } from '../parse';
-import type { DataMode } from '.';
+import { Report } from '../../ReportDef';
 
-export function getPrimaryColumnValue(
-	appt: Appointment,
-	mode: DataMode
-): TableDataObject {
+export function getPrimaryColumnName(mode: keyof Report): string {
+	switch (mode) {
+		case '% Collected':
+		case 'Patient':
+		case 'Write Offs':
+			return 'Patient Name';
+
+		case 'Clinician':
+			return 'Clinician Name';
+
+		case 'Service Type':
+			return 'Service Type';
+
+		case 'Appointment Type':
+		case 'Billing Method':
+		case 'Month':
+		case 'Primary Insurer':
+		case 'Secondary Insurer':
+			return mode;
+
+		default:
+			throw new Error(`Unknown mode ${mode}`);
+	}
+}
+
+export function getPrimaryColumnValue(appt: Appointment, mode: keyof Report) {
 	switch (mode) {
 		case '% Collected': {
-			return { value: appt.patient.name };
+			return appt.patient.name;
 		}
 		case 'Appointment Type': {
-			return { value: appt.type };
+			return appt.type;
 		}
 		case 'Billing Method': {
-			return { value: appt.billingMethod };
+			return appt.billingMethod;
 		}
-		case 'Clinician Name': {
-			return { value: appt.clinician };
+		case 'Clinician': {
+			return appt.clinician;
 		}
 		case 'Month': {
-			return {
-				value: appt.date.getMonth(),
-				text: format(appt.date, 'MMMM, yyyy'),
-			};
+			return format(appt.date, 'MMMM, yyyy');
 		}
-		case 'Patient Name': {
-			return { value: appt.patient.name };
+		case 'Patient': {
+			return appt.patient.name;
 		}
-		case 'Primary Insurer Name': {
-			return { value: appt.insurance.primaryName };
+		case 'Primary Insurer': {
+			return appt.insurance.primaryName;
 		}
-		case 'Secondary Insurer Name': {
-			return { value: appt.insurance.secondaryName };
+		case 'Secondary Insurer': {
+			return appt.insurance.secondaryName;
 		}
-		case 'Service Description': {
-			return { value: appt.serviceType };
+		case 'Service Type': {
+			return appt.serviceType;
 		}
 		case 'Write Offs': {
-			return { value: appt.patient.name };
+			return appt.patient.name;
 		}
+
+		default:
+			throw new Error(`Unknown mode ${mode}`);
 	}
 }

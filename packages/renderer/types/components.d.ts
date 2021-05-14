@@ -43,3 +43,29 @@ interface SpreadsheetData {
 		[columnName: string]: TableDataType;
 	}[];
 }
+
+interface TabulatorColumnDefinition {
+	field: string;
+	title: string;
+	formatter?: string;
+	formatterParams?: any;
+	sorter?: string;
+}
+interface TabulatorSpreadsheetColumnDefs {
+	[sheetName: string]: TabulatorColumnDefinition[];
+}
+
+interface ChartPresets {
+	[sheetName: string]: ChartComponentConfigPreset[];
+}
+interface ChartComponentConfigPreset {
+	type: keyof import('chart.js').ChartTypeRegistry | 'bar-stacked';
+	title: string;
+	mainColumn: string;
+	datasets: {
+		key: string;
+		color: string | string[];
+		label?: string;
+		[key: string]: any;
+	}[];
+}

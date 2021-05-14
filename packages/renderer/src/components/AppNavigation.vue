@@ -22,6 +22,10 @@ const tree: TreeView = [
 				text: 'Payroll Hours Breakdown',
 				href: 'payroll-hours',
 			},
+			{
+				text: 'TherapyNotes Billing Transactions',
+				href: 'billing-tn',
+			},
 		],
 	},
 ];

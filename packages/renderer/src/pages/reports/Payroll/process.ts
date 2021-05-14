@@ -19,7 +19,27 @@ interface TotalsRow {
 }
 export type Report = { Employees: EmployeeRow[]; Totals: TotalsRow[] };
 
-export const Columns = {
+const MainPreset = (mainColumn: string): ChartComponentConfigPreset => ({
+	type: 'bar-stacked',
+	title: 'Payroll hours by Admin vs Clin',
+	mainColumn,
+	datasets: [
+		{
+			key: 'Admin',
+			color: '#2196F3',
+		},
+		{
+			key: 'Clin',
+			color: '#FF9800',
+		},
+	],
+});
+export const Presets: ChartPresets = {
+	Employees: [MainPreset('Name')],
+	Totals: [MainPreset('Period')],
+};
+
+export const Columns: TabulatorSpreadsheetColumnDefs = {
 	Employees: [
 		colDef('Name'),
 		colDef('Admin'),

@@ -1,126 +1,52 @@
 <template>
-	Choose a Billing Transactions file:
-	<select v-model="option">
-		<option value="pick">Browse...</option>
-		<option v-for="o in fileHistory" :key="o.value" :value="o.value">
-			{{ o.label }}
-		</option>
-	</select>
-	<btn type="primary" @click="go">Go</btn>
-	<span v-if="loaded">
-		Download:
-		<btn type="success" @click="download">Spreadsheet</btn>
-		<btn type="success" @click="download">Chart</btn>
-		<spreadsheet v-model:sheet="sheet" :data="report" />
-		<chart :data="chart.data" :title="chart.title" :type="chart.type" />
-	</span>
+	<div class="content">
+		<choose-file file-type-label="Billing Transactions" @pick-file="go" />
+		<div v-if="file">
+			<spreadsheet
+				v-model:sheet="sheet"
+				:data="report"
+				file-name="Billing Transactions.xlsx"
+				:columns="cols"
+			/>
+			<chart :report="report" :sheet="sheet" :presets="presets" />
+		</div>
+	</div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import xlsx from 'xlsx';
-import { pickFile, recentlyOpenedFiles, saveFile } from '@/lib/io';
-import type { Report } from './process';
-import processPayroll from './process';
+import type { Report } from './ReportDef';
+import { Columns, Presets } from './ReportDef';
 import Spreadsheet from '@/components/Spreadsheet.vue';
 import Chart from '@/components/Chart.vue';
-import type { ChartData, ChartTypeRegistry } from 'chart.js';
-import { useElectron } from '@/lib/use-electron';
+import process from './process';
+import { DataMode } from './data/table';
+import ChooseFile from '@/components/ChooseFile.vue';
 
 export default defineComponent({
 	name: 'Billing',
-	components: { Spreadsheet, Chart },
+	components: { Spreadsheet, ChooseFile, Chart },
 	data: () => {
-		const hist = recentlyOpenedFiles();
+		const report = {} as Report;
+		const modes = Object.keys(Columns);
+		for (const m of modes) {
+			report[m] = [];
+		}
 		return {
 			option: '',
 			file: '',
-			hist,
-			loaded: false,
-			report: {
-				Employees: [],
-				Totals: [],
-			} as Report,
-			sheet: 'Employees' as keyof Report,
+			report,
+			sheet: '% Collected' as DataMode,
 		};
 	},
 	computed: {
-		fileHistory() {
-			const { path } = useElectron();
-			const hist: string[] = this.hist;
-			return hist.map((f) => {
-				const p = path.parse(f);
-				return { value: f, label: p.base };
-			});
-		},
-		chart(): {
-			data: ChartData;
-			type: keyof ChartTypeRegistry;
-			title: string;
-		} {
-			const MainCol = {
-				Employees: 'Name',
-				Totals: 'Period',
-			};
-			const labels = Object.values(this.report[this.sheet]).map(
-				(v) => v[MainCol[this.sheet]]
-			);
-			const data = {
-				labels,
-				datasets: [
-					{
-						label: 'Admin',
-						data: Object.values(this.report[this.sheet]).map(
-							(v) => v.Admin
-						) as number[],
-						backgroundColor: '#2196F3',
-					},
-					{
-						label: 'Clin',
-						data: Object.values(this.report[this.sheet]).map(
-							(v) => v.Clin
-						) as number[],
-						backgroundColor: '#FF9800',
-					},
-				],
-			};
-			return { data, type: 'bar', title: 'Payroll hours by Admin vs Clin' };
-		},
-	},
-	mounted() {
-		if (this.fileHistory.length === 0) return;
-		this.option = this.fileHistory[this.fileHistory.length - 1].value;
+		cols: () => Columns,
+		presets: () => Presets,
 	},
 	methods: {
-		async go() {
-			this.loaded = false;
-			if (this.option === 'pick') {
-				await this.chooseFile();
-			} else {
-				this.file = this.option;
-				await this.processHistory();
-			}
-			this.loaded = true;
-		},
-		async chooseFile() {
-			this.file = (await pickFile(true)) || '';
-			if (!this.file) return;
-			this.hist = recentlyOpenedFiles();
-			this.processHistory();
-		},
-		async processHistory() {
-			this.report = await processPayroll(this.file);
-		},
-		async download() {
-			const report = await processPayroll(this.file);
-			const wb = xlsx.utils.book_new();
-			const s1 = xlsx.utils.json_to_sheet(report.Employees);
-			const s2 = xlsx.utils.json_to_sheet(report.Totals);
-			xlsx.utils.book_append_sheet(wb, s1, 'Employees');
-			xlsx.utils.book_append_sheet(wb, s2, 'Totals');
-
-			const d = xlsx.write(wb, { bookType: 'xlsx', type: 'file' });
-			await saveFile(d);
+		async go(file: string) {
+			this.file = file;
+			this.report = await process(this.file);
 		},
 	},
 });

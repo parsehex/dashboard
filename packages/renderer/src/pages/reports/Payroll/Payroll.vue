@@ -1,21 +1,21 @@
 <template>
-	<choose-file file-type-label="Payroll History" @update:file="go" />
-	<span v-if="file">
-		<spreadsheet
-			v-model:sheet="sheet"
-			:data="report"
-			file-name="Payroll Hours Breakdown.xlsx"
-			:columns="cols"
-		/>
-		<hr />
-		<chart :data="chart.data" :title="chart.title" :type="chart.type" />
-	</span>
+	<div class="content">
+		<choose-file file-type-label="Payroll History" @pick-file="go" />
+		<div v-if="file">
+			<spreadsheet
+				v-model:sheet="sheet"
+				:data="report"
+				file-name="Payroll Hours Breakdown.xlsx"
+				:columns="cols"
+			/>
+			<chart :report="report" :sheet="sheet" :presets="presets" />
+		</div>
+	</div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { Columns, Report } from './process';
-import processPayroll from './process';
+import processPayroll, { Columns, Report, Presets } from './process';
 import Spreadsheet from '@/components/Spreadsheet.vue';
 import Chart from '@/components/Chart.vue';
 import type { ChartData, ChartTypeRegistry } from 'chart.js';
@@ -36,6 +36,7 @@ export default defineComponent({
 	},
 	computed: {
 		cols: () => Columns,
+		presets: () => Presets,
 		chart(): {
 			data: ChartData;
 			type: keyof ChartTypeRegistry;

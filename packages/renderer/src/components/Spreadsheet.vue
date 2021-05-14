@@ -27,6 +27,15 @@ import Tabulator from 'tabulator-tables';
 import xlsx from 'xlsx';
 import { saveFile } from '@/lib/io';
 import { Columns } from '@/pages/reports/Payroll/process';
+import { parse } from 'date-fns';
+
+Tabulator.prototype.extendModule('sort', 'sorters', {
+	month: (a: string, b: string) => {
+		const aD = parse(a, 'MMMM, yyyy', new Date()).getTime();
+		const bD = parse(b, 'MMMM, yyyy', new Date()).getTime();
+		return aD - bD;
+	},
+});
 
 interface Cols {
 	[sheetName: string]: typeof Columns.Employees;

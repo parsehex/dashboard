@@ -86,14 +86,11 @@ export function uniqObjectArray<T extends GenericObject>(
 }
 
 export function genNAColumns(columnNames: string | string[]) {
-	const tableData: TableRowObject = {};
+	const tableData: any = {};
 
 	if (typeof columnNames === 'string') columnNames = [columnNames];
 	for (const n of columnNames) {
-		tableData[n] = {
-			text: 'N/A',
-			value: -1,
-		};
+		tableData[n] = 'N/A';
 	}
 
 	return tableData;
@@ -107,13 +104,6 @@ export function pad(n: string | number, w: number, fillString = '0') {
 	return n.toString().padStart(w, fillString);
 }
 
-interface TabulatorColumnDefinition {
-	field: string;
-	title: string;
-	formatter?: string;
-	formatterParams?: any;
-	sorter?: string;
-}
 /**
  * Returns an object that can be given to Tabulator's `columns` option.
  *

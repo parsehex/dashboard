@@ -1,11 +1,10 @@
 import { interquartileRange, quantile } from 'simple-statistics';
 import math from '@/math';
-// import type { TableRowObject } from '@/types/components';
-import { $, genNAColumns } from '@/lib/utils';
+import { genNAColumns } from '@/lib/utils';
 import type { Appointment } from '../../parse';
 import { pastAppts } from '../../filter';
 
-export default function basicStats(appts: Appointment[]): TableRowObject {
+export default function basicStats(appts: Appointment[]) {
 	appts = pastAppts(appts);
 	if (appts.length === 0) {
 		return genNAColumns(['Average', 'Q1', 'Median', 'Q3', 'IQR']);
@@ -20,25 +19,10 @@ export default function basicStats(appts: Appointment[]): TableRowObject {
 	const iqr = interquartileRange(totals);
 
 	return {
-		Average: {
-			text: $(average),
-			value: average,
-		},
-		Q1: {
-			text: $(q1),
-			value: q1,
-		},
-		Median: {
-			text: $(median),
-			value: median,
-		},
-		Q3: {
-			text: $(q3),
-			value: q3,
-		},
-		IQR: {
-			text: $(iqr),
-			value: iqr,
-		},
+		Average: average,
+		Q1: q1,
+		Median: median,
+		Q3: q3,
+		IQR: iqr,
 	};
 }
