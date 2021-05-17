@@ -116,9 +116,10 @@ app.on('window-all-closed', () => {
 		console.error('Failed to create window:', e);
 	}
 
-	if (!env.PROD) return;
-	await app.whenReady();
+	if (env.PROD) await tryUpdate();
+})();
 
+async function tryUpdate() {
 	const { autoUpdater } = await import('electron-updater');
 	autoUpdater.logger = logger;
 
@@ -128,7 +129,7 @@ app.on('window-all-closed', () => {
 	} catch (e) {
 		console.error('Failed update check:', e);
 	}
-})();
+}
 
 function setupWindowEvents() {
 	if (!mainWindow) return;
