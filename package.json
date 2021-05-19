@@ -1,6 +1,6 @@
 {
   "name": "dashboard",
-  "version": "0.1.1",
+  "version": "0.2",
   "author": "Thomas Mays",
   "private": true,
   "engines": {
@@ -34,6 +34,7 @@
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^19.0.0",
+    "@types/bootstrap": "^5.0.15",
     "@types/electron-devtools-installer": "^2.2.0",
     "@types/fs-extra": "^9.0.11",
     "@types/mathjs": "^6.0.12",
@@ -54,6 +55,7 @@
     "spectron": "^14.0.0",
     "typescript": "^4.2.4",
     "vite": "^2.2.3",
+    "vue-devtools": "^5.1.4",
     "vue-tsc": "^0.0.26"
   },
   "dependencies": {

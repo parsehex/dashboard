@@ -20,12 +20,18 @@ export function recentlyOpenedFiles(): string[] {
 	return ls ? JSON.parse(ls) : [];
 }
 
-export async function pickFile(remember?: boolean) {
+interface PickFileOptions {
+	remember?: boolean;
+	title?: string;
+}
+export async function pickFile({ remember, title }: PickFileOptions) {
 	const { dialog } = useElectron();
-	const f = await dialog.showOpenDialog({
+	const options: Electron.OpenDialogOptions = {
 		properties: ['openFile'],
-	});
-	if (!f.filePaths.length) return false;
+	};
+	if (title) options.title = title;
+	const f = await dialog.showOpenDialog(options);
+	if (f.canceled || !f.filePaths.length) return false;
 
 	if (remember) {
 		const ls = localStorage.getItem(LS_KEY);

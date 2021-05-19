@@ -69,3 +69,9 @@ interface ChartComponentConfigPreset {
 		[key: string]: any;
 	}[];
 }
+
+interface DropdownAction {
+	onClick: () => void;
+	label: string;
+}
+type DropdownActions = DropdownAction[];

@@ -1,9 +1,10 @@
 import { app, BrowserWindow, ipcMain, dialog } from 'electron';
 import { join } from 'path';
 import { URL } from 'url';
-import Store from 'electron-store';
 // import Chalk from 'chalk';
 import logger from 'electron-log';
+import { store } from './store';
+import { setupWindowEvents } from './window-events';
 require('@electron/remote/main').initialize();
 
 const isSingleInstance = app.requestSingleInstanceLock();
@@ -15,42 +16,6 @@ if (!isSingleInstance) {
 
 const env = import.meta.env;
 
-// Install "Vue.js devtools"
-if (env.MODE === 'development') {
-	app
-		.whenReady()
-		.then(() => import('electron-devtools-installer'))
-		.then(({ default: installExtension, VUEJS3_DEVTOOLS }) =>
-			installExtension(VUEJS3_DEVTOOLS, {
-				loadExtensionOptions: {
-					allowFileAccess: true,
-				},
-			})
-		)
-		.catch((e) => console.error('Failed install extension:', e));
-}
-
-interface AppStore {
-	window: {
-		width: number;
-		height: number;
-		x: number;
-		y: number;
-		maximized: boolean;
-	};
-}
-
-const store = new Store<AppStore>({
-	defaults: {
-		window: {
-			x: 0,
-			y: 0,
-			width: 800,
-			height: 600,
-			maximized: false,
-		},
-	},
-});
 let mainWindow: BrowserWindow | null = null;
 
 ipcMain.handle(
@@ -96,19 +61,28 @@ const createWindow = async () => {
 		);
 	}
 
-	setupWindowEvents();
+	setupWindowEvents(mainWindow);
 
 	await mainWindow.loadURL(pageUrl as string);
 };
 
+app.on('second-instance', () => {
+	if (mainWindow) {
+		if (mainWindow.isMinimized()) mainWindow.restore();
+		mainWindow.focus();
+	}
+});
 app.on('window-all-closed', () => {
 	if (process.platform !== 'darwin') {
 		app.quit();
 	}
 });
 
-(async () => {
-	await app.whenReady();
+app.on('ready', async () => {
+	if (env.MODE !== 'production') {
+		require('vue-devtools').install();
+	}
+	// if (env.MODE === 'development') await installExtensions();
 
 	try {
 		await createWindow();
@@ -117,7 +91,7 @@ app.on('window-all-closed', () => {
 	}
 
 	if (env.PROD) await tryUpdate();
-})();
+});
 
 async function tryUpdate() {
 	const { autoUpdater } = await import('electron-updater');
@@ -129,26 +103,4 @@ async function tryUpdate() {
 	} catch (e) {
 		console.error('Failed update check:', e);
 	}
-}
-
-function setupWindowEvents() {
-	if (!mainWindow) return;
-
-	let resizeWaiting = false;
-	mainWindow.on('resize', () => {
-		if (resizeWaiting) return;
-		setTimeout(async () => {
-			const newBounds = mainWindow?.getBounds();
-			store.set('window', {
-				...newBounds,
-				maximized: store.get('window.maximized', false),
-			});
-			resizeWaiting = false;
-		}, 750);
-	});
-
-	mainWindow.on('maximize', () => {
-		const maximized = mainWindow?.isMaximized();
-		store.set('window.maximized', maximized);
-	});
 }

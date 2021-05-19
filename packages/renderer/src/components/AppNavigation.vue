@@ -19,6 +19,10 @@ const tree: TreeView = [
 		id: 'report',
 		children: [
 			{
+				text: 'Payroll',
+				href: 'payroll',
+			},
+			{
 				text: 'Payroll Hours Breakdown',
 				href: 'payroll-hours',
 			},
