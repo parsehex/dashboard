@@ -71,7 +71,7 @@ export default defineComponent({
 	mounted() {
 		const table = this.$refs['table'] as HTMLDivElement;
 		this.table = new Tabulator(table, {
-			maxHeight: Math.floor(window.innerHeight / 2) - table.offsetTop, // this enables the Virtual DOM
+			maxHeight: Math.floor(window.innerHeight) - table.offsetTop - 50, // this enables the Virtual DOM
 			data: this.data[this.sheet],
 			columns: this.columns[this.sheet],
 			layout: 'fitColumns',

@@ -5,6 +5,7 @@ dist
 thumbs.db
 types/env.d.ts
 .env
+**/src.old/**
 
 .eslintcache
 

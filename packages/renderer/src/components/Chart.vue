@@ -92,16 +92,15 @@ export default defineComponent({
 		const presets = this.presets[sheet];
 		if (!presets || presets.length === 0) return;
 
-		let invalidPreset = false;
-		if (!preset) invalidPreset = true;
-		else {
-			for (const p of presets) {
-				if (p.title === preset) continue;
-				invalidPreset = true;
-			}
+		console.log(presets);
+		let invalidPreset = true;
+		for (const p of presets) {
+			if (p.title !== preset) continue;
+			invalidPreset = false;
 		}
 
 		if (invalidPreset) {
+			console.log('Invalid chart preset, resetting');
 			this.preset = presets[0].title;
 		}
 

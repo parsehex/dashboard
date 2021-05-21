@@ -11,12 +11,16 @@
 		>
 			{{ btnLabel }}
 		</btn>
-		<ul class="dropdown-menu" :aria-labelledby="btnLabel + '-dropdown'">
+		<ul
+			v-click-outside="close"
+			class="dropdown-menu"
+			:aria-labelledby="btnLabel + '-dropdown'"
+		>
 			<li
 				v-for="a in actions"
 				:key="btnLabel + '-' + a.label"
 				class="dropdown-item"
-				@click.prevent="a.onClick"
+				@click.prevent="handleClick(a)"
 			>
 				<a href="#">
 					{{ a.label }}
@@ -39,9 +43,21 @@ export default defineComponent({
 		},
 		btnLabel: { type: String, required: true },
 	},
+	data: (): { dropdown: Dropdown | null } => ({
+		dropdown: null,
+	}),
 	mounted() {
 		const ref = this.$refs['btn'] as any;
-		new Dropdown(ref.$el);
+		this.dropdown = new Dropdown(ref.$el);
+	},
+	methods: {
+		close() {
+			this.dropdown?.hide();
+		},
+		handleClick(action: DropdownActions[0]) {
+			action.onClick();
+			this.close();
+		},
 	},
 });
 </script>

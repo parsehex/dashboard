@@ -9,5 +9,6 @@ export const store = new Store<AppStore>({
 			height: 600,
 			maximized: false,
 		},
+		dir: '',
 	},
 });

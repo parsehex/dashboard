@@ -1,10 +1,10 @@
 <template>
 	<container fluid>
 		<row>
-			<column class="nav col-3">
-				<app-navigation />
+			<column class="nav col-2">
+				<app-navigation v-if="dir" />
 			</column>
-			<column class="page col-9">
+			<column class="page col-10">
 				<router-view />
 			</column>
 		</row>
@@ -14,10 +14,14 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import AppNavigation from '@/components/AppNavigation.vue';
+import state from './state';
 export default defineComponent({
 	name: 'App',
 	components: {
 		AppNavigation,
+	},
+	computed: {
+		dir: () => state.dir,
 	},
 });
 </script>

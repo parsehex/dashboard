@@ -46,6 +46,8 @@ export default defineConfig({
 				'electron-updater',
 				'electron-log',
 				'chalk',
+				'chokidar',
+				'fs-extra',
 				...builtinModules,
 			],
 			output: {

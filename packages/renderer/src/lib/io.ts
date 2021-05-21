@@ -41,18 +41,20 @@ export async function pickFile({ remember, title }: PickFileOptions) {
 	}
 	return f.filePaths[0];
 }
-export async function saveFile(d: Buffer, fileName: string) {
-	const { writeFile, ipcRenderer } = useElectron();
-	const ext = fileName.split('.').slice(-1).join();
-	const fileFilter = FileFilters[ext];
-	const f = await ipcRenderer.invoke('save-as', {
-		filters: [fileFilter],
-		defaultPath: fileName,
-	});
-	if (f.canceled || !f.filePath) return false;
+export async function pickDir() {
+	const { dialog, ipcRenderer } = useElectron();
+	const options: Electron.OpenDialogOptions = {
+		properties: ['openDirectory'],
+	};
 
-	const file = f.filePath;
-	await writeFile(file, d);
+	const f = await dialog.showOpenDialog(options);
+	if (f.canceled || !f.filePaths.length) return false;
+
+	await ipcRenderer.invoke('set-dir', f.filePaths[0]);
+}
+export async function saveFile(d: Buffer, fileName: string) {
+	const { ipcRenderer } = useElectron();
+	await ipcRenderer.invoke('save-as', { fileName, d });
 }
 
 interface Options<Col> {

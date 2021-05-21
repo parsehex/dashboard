@@ -129,3 +129,10 @@ export function colDef(
 
 	return def;
 }
+
+export function strToId(s: string) {
+	return s
+		.toLowerCase()
+		.replaceAll(' ', '-')
+		.replaceAll(/['".,[\]]/g, '');
+}

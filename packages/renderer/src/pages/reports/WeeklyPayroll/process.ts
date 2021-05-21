@@ -1,9 +1,10 @@
 import xlsx from 'xlsx';
 import { useElectron } from '@/lib/use-electron';
-import { clone, colDef } from '@/lib/utils';
+import { colDef } from '@/lib/utils';
 
 interface EmployeeRow {
 	Name: string;
+	'Vaca Hrs': number;
 	'Admin Hrs': number;
 	'Admin Rate': number;
 	'Admin Gross': number;
@@ -12,7 +13,6 @@ interface EmployeeRow {
 	'Clin Gross': number;
 	'IOP Rate': number;
 	'IOP Reg Hrs': number;
-	'Vaca Hrs': number;
 	'Total Hrs': number;
 	'Total Gross': number;
 }
@@ -21,6 +21,7 @@ export type Report = { Employees: EmployeeRow[] };
 export const Columns: TabulatorSpreadsheetColumnDefs = {
 	Employees: [
 		colDef('Name'),
+		colDef('Vaca Hrs'),
 		colDef('Admin Hrs'),
 		colDef('Admin Rate'),
 		colDef('Admin Gross'),
@@ -29,7 +30,6 @@ export const Columns: TabulatorSpreadsheetColumnDefs = {
 		colDef('Clin Gross'),
 		colDef('IOP Rate'),
 		colDef('IOP Reg Hrs'),
-		colDef('Vaca Hrs'),
 		colDef('Total Hrs'),
 		colDef('Total Gross'),
 	],
@@ -89,7 +89,7 @@ export default async function (input: ReportFilePaths): Promise<Report> {
 	files.rates = xlsx.utils.sheet_to_json(wb3.Sheets['Rates']);
 	files.aliases = xlsx.utils.sheet_to_json(wb3.Sheets['Aliases']);
 
-	console.log(files);
+	// console.log(files);
 
 	const report: Report = {
 		Employees: [],
@@ -107,6 +107,7 @@ export default async function (input: ReportFilePaths): Promise<Report> {
 		}
 		const e: EmployeeRow = {
 			Name,
+			'Vaca Hrs': 0,
 			'Admin Hrs': 0,
 			'Admin Rate': 0,
 			'Admin Gross': 0,
@@ -115,7 +116,6 @@ export default async function (input: ReportFilePaths): Promise<Report> {
 			'Clin Gross': 0,
 			'IOP Rate': 0,
 			'IOP Reg Hrs': 0,
-			'Vaca Hrs': 0,
 			'Total Hrs': 0,
 			'Total Gross': 0,
 		};
@@ -186,13 +186,18 @@ export default async function (input: ReportFilePaths): Promise<Report> {
 		if (cap !== false && total > cap) total = cap;
 		E['Total Hrs'] = total;
 
-		if (E['Admin Hrs']) E['Admin Gross'] = E['Admin Hrs'] * E['Admin Rate'];
-		if (E['Clin Hrs']) E['Clin Gross'] = E['Clin Hrs'] * E['Clin Rate'];
+		if (E['Admin Hrs']) {
+			E['Admin Gross'] = E['Admin Hrs'] * E['Admin Rate'];
+		}
+		if (E['Clin Hrs']) {
+			E['Clin Gross'] = E['Clin Hrs'] * E['Clin Rate'];
+		}
+
 		E['Total Gross'] = (E['Clin Gross'] || 0) + (E['Admin Gross'] || 0);
 		E['IOP Reg Hrs'] = E['Total Gross'] / E['IOP Rate'];
 	}
 
-	console.log(clone(report));
+	// console.log(clone(report));
 
 	return report;
 }

@@ -5,6 +5,8 @@ interface ElectronApi {
 	readonly writeFile: typeof import('fs-extra')['writeFile'];
 	readonly path: typeof import('path');
 	readonly ipcRenderer: typeof import('electron')['ipcRenderer'];
+	readonly on: typeof import('electron')['ipcRenderer']['on'];
+	readonly addListener: typeof import('electron')['ipcRenderer']['addListener'];
 	readonly bufferFrom: typeof Buffer.from;
 }
 

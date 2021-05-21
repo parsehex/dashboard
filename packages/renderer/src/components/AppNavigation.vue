@@ -19,7 +19,7 @@ const tree: TreeView = [
 		id: 'report',
 		children: [
 			{
-				text: 'Payroll',
+				text: 'Weekly Payroll',
 				href: 'payroll',
 			},
 			{
@@ -27,7 +27,7 @@ const tree: TreeView = [
 				href: 'payroll-hours',
 			},
 			{
-				text: 'TherapyNotes Billing Transactions',
+				text: 'TN Billing Transactions',
 				href: 'billing-tn',
 			},
 		],

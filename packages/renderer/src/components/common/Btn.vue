@@ -5,17 +5,17 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent, PropType } from 'vue';
 
 export default defineComponent({
 	name: 'Btn',
 	props: {
 		type: {
-			type: String as () => BootstrapType,
+			type: String as PropType<BootstrapType>,
 			required: true,
 		},
 		size: {
-			type: String as () => '' | 'xs' | 'sm' | 'lg',
+			type: String as PropType<'' | 'xs' | 'sm' | 'lg'>,
 			required: false,
 			default: '',
 		},

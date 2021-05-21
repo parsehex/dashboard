@@ -12,10 +12,12 @@ const apiKey = 'electron';
 const api: ElectronApi = {
 	versions: process.versions,
 	dialog,
-	readFile: fs.readFile,
-	writeFile: fs.writeFile,
+	readFile: fs.readFile.bind(fs),
+	writeFile: fs.writeFile.bind(fs),
 	path,
 	ipcRenderer,
+	on: ipcRenderer.on.bind(ipcRenderer),
+	addListener: ipcRenderer.addListener.bind(ipcRenderer),
 	bufferFrom: Buffer.from.bind(Buffer),
 };
 

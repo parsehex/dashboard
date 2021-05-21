@@ -19,6 +19,21 @@ import router from '../router';
 
 export const app = createApp(App);
 
+const clickOutside = {
+	beforeMount: (el: any, binding: any) => {
+		el.clickOutsideEvent = (event: any) => {
+			if (!(el == event.target || el.contains(event.target))) {
+				binding.value();
+			}
+		};
+		document.addEventListener('click', el.clickOutsideEvent);
+	},
+	unmounted: (el: any) => {
+		document.removeEventListener('click', el.clickOutsideEvent);
+	},
+};
+app.directive('click-outside', clickOutside);
+
 export function setupVue(el: string | Element) {
 	app.component(Alert.name, Alert);
 	app.component(Btn.name, Btn);

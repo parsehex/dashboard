@@ -1,14 +1,32 @@
 <template>
 	<div class="content">
-		<choose-file file-type-label="Payroll History" @pick-file="go" />
-		<div v-if="file">
-			<spreadsheet
-				v-model:sheet="sheet"
-				:data="report"
-				file-name="Payroll Hours Breakdown.xlsx"
-				:columns="cols"
-			/>
-			<chart :report="report" :sheet="sheet" :presets="presets" />
+		<div>
+			<choose-file file-type="TSheetsHoursReport" @pick-file="go" />
+		</div>
+		<div v-if="loaded" class="container-fluid">
+			<tabs :tab-list="['Spreadsheet', 'Chart']">
+				<div
+					id="spreadsheet"
+					class="tab-pane active"
+					role="tabpanel"
+					aria-labelledby="spreadsheet-tab"
+				>
+					<spreadsheet
+						v-model:sheet="sheet"
+						:data="report"
+						file-name="Payroll Hours Breakdown.xlsx"
+						:columns="cols"
+					/>
+				</div>
+				<div
+					id="chart"
+					class="tab-pane"
+					role="tabpanel"
+					aria-labelledby="chart-tab"
+				>
+					<chart :report="report" :sheet="sheet" :presets="presets" />
+				</div>
+			</tabs>
 		</div>
 	</div>
 </template>
@@ -20,13 +38,15 @@ import Spreadsheet from '@/components/Spreadsheet.vue';
 import Chart from '@/components/Chart.vue';
 import type { ChartData, ChartTypeRegistry } from 'chart.js';
 import ChooseFile from '@/components/ChooseFile.vue';
+import Tabs from '@/components/common/Tabs.vue';
 
 export default defineComponent({
 	name: 'Payroll',
-	components: { Spreadsheet, Chart, ChooseFile },
+	components: { Spreadsheet, Chart, ChooseFile, Tabs },
 	data: () => {
 		return {
 			file: '',
+			loaded: false,
 			report: {
 				Employees: [],
 				Totals: [],
@@ -75,6 +95,7 @@ export default defineComponent({
 		async go(file: string) {
 			this.file = file;
 			this.report = await processPayroll(this.file);
+			this.loaded = true;
 		},
 	},
 });
