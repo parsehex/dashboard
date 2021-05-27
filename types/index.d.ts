@@ -19,11 +19,17 @@ interface FileType {
 		key: SupportedFileType;
 	};
 }
-interface Files {
+interface _Files {
+	[DataSource: string]: FileType;
+}
+interface Files extends _Files {
 	TNBillingStatement: FileType;
 	TSheetsHoursReport: FileType;
 	PayrollOptions: FileType;
 }
 
-type SupportedFileType = keyof Files;
+type SupportedFileType =
+	| 'TNBillingStatement'
+	| 'TSheetsHoursReport'
+	| 'PayrollOptions';
 type FilesList = Record<keyof Files, string | string[]>;

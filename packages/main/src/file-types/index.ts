@@ -1,4 +1,5 @@
 const dictionary: Files = {
+	// @ts-ignore: i have no clue what the type checker is talking about
 	TNBillingStatement: {
 		name: {
 			print: 'TherapyNotes Billing Statement',
@@ -6,6 +7,7 @@ const dictionary: Files = {
 			key: 'TNBillingStatement',
 		},
 	},
+	// @ts-ignore: i have no clue what the type checker is talking about
 	TSheetsHoursReport: {
 		name: {
 			print: 'TSheets Hours Report',
@@ -13,6 +15,7 @@ const dictionary: Files = {
 			key: 'TSheetsHoursReport',
 		},
 	},
+	// @ts-ignore: i have no clue what the type checker is talking about
 	PayrollOptions: {
 		name: {
 			print: 'Payroll Options',
@@ -22,6 +25,7 @@ const dictionary: Files = {
 	},
 };
 const keys = Object.keys(dictionary) as SupportedFileType[];
+// @ts-ignore: i have no clue what the type checker is talking about
 const fileKeyLookup = keys.map((key) => ({
 	file: dictionary[key].name.file,
 	key,

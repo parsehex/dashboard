@@ -20,6 +20,6 @@
     "types/**/*.d.ts",
     "../../types/**/*.d.ts",
     "../preload/types/electron-api.d.ts",
-    "../main/src/file-types.ts"
+    "../main/src/file-types/**/*"
   ]
 }

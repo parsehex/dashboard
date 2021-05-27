@@ -4,15 +4,16 @@ import { store } from './store';
 import { join } from 'path';
 import chokidar from 'chokidar';
 import state from './state';
+import glob from 'glob';
 
 export async function setupDir() {
 	const dir = store.get('dir');
 	if (!dir) return;
 
-	for (const f of FileTypes.keys) {
-		if (!(await exists(join(dir, f)))) {
-			await fs.mkdir(join(dir, f));
-		}
+	for (const k of FileTypes.keys) {
+		if (await exists(k)) continue;
+		const f = FileTypes.dictionary[k].name.file;
+		await fs.mkdir(join(dir, f));
 	}
 
 	chokidar.watch(dir).on('all', async () => {
@@ -20,13 +21,15 @@ export async function setupDir() {
 	});
 }
 
-async function exists(p: string) {
-	try {
-		await fs.stat(p);
-		return true;
-	} catch (e) {
-		return false;
-	}
+function exists(fileType: SupportedFileType) {
+	return new Promise((resolve) => {
+		const dir = store.get('dir');
+		const p = join(dir, fileType + '*');
+		glob(p, (err, matches) => {
+			if (err) return resolve(false);
+			if (matches.length > 0) return true;
+		});
+	});
 }
 
 export async function fetchFiles() {

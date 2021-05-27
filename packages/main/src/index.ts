@@ -6,7 +6,6 @@ import logger from 'electron-log';
 import { store } from './store';
 import { setupWindowEvents } from './window-events';
 // import * as fs from 'fs-extra';
-import { fetchFiles, setupDir } from './dir';
 import state from './state';
 import { writeFile } from 'fs-extra';
 require('@electron/remote/main').initialize();
@@ -34,27 +33,6 @@ ipcMain.handle('save-as', async (event, { fileName, d }: any) => {
 	if (f.canceled || !f.filePath) return;
 	const file = f.filePath;
 	await writeFile(file, d);
-});
-ipcMain.handle('set-dir', async (event, d: string) => {
-	store.set('dir', d);
-	await setupDir();
-	ipcMain.emit('dir', d);
-});
-ipcMain.handle(
-	'pick-dir',
-	async (event, options: Electron.OpenDialogOptions) => {
-		return await dialog.showOpenDialog(
-			state.mainWindow as BrowserWindow,
-			options
-		);
-	}
-);
-
-ipcMain.handle('get-files', async () => {
-	return await fetchFiles();
-});
-ipcMain.handle('get-dir', async () => {
-	return store.get('dir');
 });
 
 const createWindow = async () => {
@@ -111,6 +89,10 @@ app.on('window-all-closed', () => {
 });
 
 app.on('ready', async () => {
+	// const appName = app.getName();
+	// const getAppPath = join(app.getPath('appData'), appName);
+	// await unlink(getAppPath);
+
 	if (env.MODE !== 'production') {
 		require('vue-devtools').install();
 	}
@@ -123,8 +105,6 @@ app.on('ready', async () => {
 	}
 
 	if (env.PROD) await tryUpdate();
-
-	if (store.get('dir')) await setupDir();
 });
 
 async function tryUpdate() {

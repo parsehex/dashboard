@@ -6,6 +6,7 @@ thumbs.db
 types/env.d.ts
 .env
 **/src.old/**
+packages/renderer/help
 
 .eslintcache
 

@@ -2,9 +2,7 @@ import { format } from 'date-fns';
 import { loadSpreadsheetFile } from '@/lib/io';
 import { newDateFromExcel, uniqObjectArray } from '@/lib/utils';
 
-export default async function processTherapyNotesData(
-	file: string
-) {
+export default async function processTherapyNotesData(file: string) {
 	const sheet: TherapyNotesRow[] = await loadSpreadsheetFile<TherapyNotesRow>({
 		file,
 		sheetName: 'Billing Transactions',

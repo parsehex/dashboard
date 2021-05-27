@@ -1,6 +1,6 @@
 {
   "name": "dashboard",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "author": "Thomas Mays",
   "private": true,
   "engines": {
@@ -52,6 +52,7 @@
     "eslint": "^7.25.0",
     "eslint-plugin-vue": "^7.9.0",
     "lint-staged": "^10.5.4",
+    "markdown-styles": "^3.2.0",
     "simple-git-hooks": "^2.4.1",
     "spectron": "^14.0.0",
     "typescript": "^4.2.4",
@@ -71,6 +72,7 @@
     "electron-store": "^8.0.0",
     "electron-updater": "^4.3.8",
     "fs-extra": "^8.1.0",
+    "glob": "^7.1.7",
     "jquery": "^3.6.0",
     "mathjs": "^9.3.2",
     "numeral": "^2.0.6",

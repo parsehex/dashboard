@@ -51,6 +51,10 @@ import Chart from '@/components/Chart.vue';
 import Tabs from '@/components/common/Tabs.vue';
 import { now, pad } from '@/lib/utils';
 import { Presets } from './ReportDef';
+import { useElectron } from '@/lib/use-electron';
+const { bufferFrom } = useElectron();
+
+const BlankBuffer = bufferFrom('');
 
 export default defineComponent({
 	name: 'Payroll',
@@ -58,9 +62,9 @@ export default defineComponent({
 	data: () => {
 		return {
 			files: {
-				billing: '',
-				hours: '',
-				options: '',
+				billing: BlankBuffer,
+				hours: BlankBuffer,
+				options: BlankBuffer,
 			},
 			loaded: false,
 			report: {
@@ -83,7 +87,11 @@ export default defineComponent({
 	watch: {
 		files: {
 			handler() {
-				if (this.files.billing && this.files.hours && this.files.options) {
+				if (
+					this.files.billing !== BlankBuffer &&
+					this.files.hours !== BlankBuffer &&
+					this.files.options !== BlankBuffer
+				) {
 					this.go();
 				}
 			},

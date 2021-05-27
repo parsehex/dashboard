@@ -1,8 +1,8 @@
 import type { Chart } from 'chart.js';
 import * as xlsx from 'xlsx';
-import { useElectron } from './use-electron';
+import { useElectron } from '../use-electron';
+import { getLSKey, recentlyOpenedFiles } from './file-history';
 
-const LS_KEY = 'file-history';
 export const FileFilters: { [ext: string]: Electron.FileFilter } = {
 	png: { name: 'PNG files', extensions: ['png'] },
 	xlsx: { name: 'XLSX files', extensions: ['xlsx'] },
@@ -15,17 +15,13 @@ export async function chartToBuffer(chart: Chart) {
 	return useElectron().bufferFrom(file);
 }
 
-export function recentlyOpenedFiles(): string[] {
-	const ls = localStorage.getItem(LS_KEY);
-	return ls ? JSON.parse(ls) : [];
-}
-
 interface PickFileOptions {
-	remember?: boolean;
+	/** If provided, then this key will be used for storing file list */
+	rememberKey?: SupportedFileType;
 	title?: string;
 }
-export async function pickFile({ remember, title }: PickFileOptions) {
-	const { dialog } = useElectron();
+export async function pickFile({ rememberKey, title }: PickFileOptions) {
+	const { dialog, exists } = useElectron();
 	const options: Electron.OpenDialogOptions = {
 		properties: ['openFile'],
 	};
@@ -33,11 +29,18 @@ export async function pickFile({ remember, title }: PickFileOptions) {
 	const f = await dialog.showOpenDialog(options);
 	if (f.canceled || !f.filePaths.length) return false;
 
-	if (remember) {
-		const ls = localStorage.getItem(LS_KEY);
-		const hist: string[] = ls ? JSON.parse(ls) : [];
+	if (rememberKey) {
+		const lsKey = getLSKey(rememberKey);
+		const hist = recentlyOpenedFiles(rememberKey);
 		hist.push(f.filePaths[0]);
-		localStorage.setItem(LS_KEY, JSON.stringify(hist));
+		for (const p of hist) {
+			// remove broken paths
+			if (!(await exists(p))) {
+				const i = hist.indexOf(p);
+				hist.splice(i, 1);
+			}
+		}
+		localStorage.setItem(lsKey, JSON.stringify(hist));
 	}
 	return f.filePaths[0];
 }

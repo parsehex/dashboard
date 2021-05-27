@@ -1,6 +1,7 @@
 <template>
 	<container fluid>
 		<tree-view :tree="tree" />
+		<a href="/help/index.html" class="btn btn-info" target="_blank">Help</a>
 		<btn v-if="pdfCharts.length > 0" type="success">
 			Save {{ pdfCharts.length }} Chart{{ pdfCharts.length > 1 ? 's' : '' }} as
 			PDF

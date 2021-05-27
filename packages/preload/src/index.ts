@@ -2,6 +2,7 @@ import { contextBridge, ipcRenderer } from 'electron';
 import remote from '@electron/remote';
 import * as fs from 'fs-extra';
 import * as path from 'path';
+import { exists } from '../../main/src/fs';
 
 const { dialog } = remote;
 
@@ -19,6 +20,7 @@ const api: ElectronApi = {
 	on: ipcRenderer.on.bind(ipcRenderer),
 	addListener: ipcRenderer.addListener.bind(ipcRenderer),
 	bufferFrom: Buffer.from.bind(Buffer),
+	exists,
 };
 
 if (import.meta.env.MODE !== 'test') {

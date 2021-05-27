@@ -8,6 +8,7 @@ interface ElectronApi {
 	readonly on: typeof import('electron')['ipcRenderer']['on'];
 	readonly addListener: typeof import('electron')['ipcRenderer']['addListener'];
 	readonly bufferFrom: typeof Buffer.from;
+	readonly exists: typeof import('../../main/src/fs')['exists'];
 }
 
 declare interface Window {

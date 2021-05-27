@@ -1,25 +1,15 @@
 <template>
-	<span>
-		Choose a folder for data:
-		<btn type="primary" @click="pick">Pick Data Folder</btn>
-	</span>
-	<p>{{ dir || 'No folder selected' }}</p>
+	<div>
+		<alert type="primary"> &lt; Go somewhere on the left </alert>
+	</div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { pickDir } from '@/lib/io';
-import state from '@/state';
+import Alert from '@/components/common/Alert.vue';
 
 export default defineComponent({
 	name: 'Home',
-	computed: {
-		dir: () => state.dir,
-	},
-	methods: {
-		async pick() {
-			await pickDir();
-		},
-	},
+	components: { Alert },
 });
 </script>
