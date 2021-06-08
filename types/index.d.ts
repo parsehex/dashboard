@@ -26,10 +26,26 @@ interface Files extends _Files {
 	TNBillingStatement: FileType;
 	TSheetsHoursReport: FileType;
 	PayrollOptions: FileType;
+	PayrollSummary: FileType;
+	PNCDepositActivity: FileType;
 }
 
 type SupportedFileType =
 	| 'TNBillingStatement'
 	| 'TSheetsHoursReport'
-	| 'PayrollOptions';
-type FilesList = Record<keyof Files, string | string[]>;
+	| 'PayrollOptions'
+	| 'PNCDepositActivity'
+	| 'PayrollSummary';
+// type FilesList = Record<SupportedFileType, string | string[]>;
+
+interface ReportFolder {
+	files: string[];
+	[reportName: string]: string[];
+}
+interface FilesList {
+	'Weekly Payroll': ReportFolder;
+	'Weekly Transfers': ReportFolder;
+	[ReportType: string]: ReportFolder;
+}
+
+type ReportType = 'Weekly Payroll' | 'Weekly Transfers';

@@ -1,19 +1,12 @@
-import xlsx from 'xlsx';
+import FileValidator from './_FileValidator';
 
-const RequiredSheets = [
-	'Rates',
-	'Salaried Employees',
-	'Billing Counselor Override',
-	'Aliases',
-	'Hours Limits',
-];
-
-export default function validatePayrollOptions(data: Buffer) {
-	const wb = xlsx.read(data, { type: 'array' });
-	const { SheetNames } = wb;
-
-	for (const S of RequiredSheets) {
-		if (!SheetNames.includes(S)) return false;
-	}
-	return true;
+export default class PayrollOptions extends FileValidator {
+	protected static NameRegex = /Payroll.Options\..*/;
+	protected static Sheets = [
+		'Rates',
+		'Salaried Employees',
+		'Billing Counselor Override',
+		'Aliases',
+		'Hours Limits',
+	];
 }

@@ -1,19 +1,20 @@
 import * as fs from 'fs-extra';
-import FileTypes, { getKeyFromFile } from './file-types';
 import { store } from './store';
-import { join } from 'path';
+import { join, resolve } from 'path';
 import chokidar from 'chokidar';
 import state from './state';
-import glob from 'glob';
+import { exists } from './fs';
+
+const Reports = ['Weekly Payroll', 'Weekly Transfers'];
 
 export async function setupDir() {
 	const dir = store.get('dir');
-	if (!dir) return;
+	if (!dir) throw new Error('No directory set');
 
-	for (const k of FileTypes.keys) {
-		if (await exists(k)) continue;
-		const f = FileTypes.dictionary[k].name.file;
-		await fs.mkdir(join(dir, f));
+	for (const k of Reports) {
+		const p = resolve(dir, k);
+		if (await exists(p)) continue;
+		await fs.mkdirp(p);
 	}
 
 	chokidar.watch(dir).on('all', async () => {
@@ -21,33 +22,27 @@ export async function setupDir() {
 	});
 }
 
-function exists(fileType: SupportedFileType) {
-	return new Promise((resolve) => {
-		const dir = store.get('dir');
-		const p = join(dir, fileType + '*');
-		glob(p, (err, matches) => {
-			if (err) return resolve(false);
-			if (matches.length > 0) return true;
-		});
-	});
-}
-
 export async function fetchFiles() {
 	const dir = store.get('dir');
-	const files = {} as FilesList;
-	const f = await fs.readdir(dir);
-	for (const file of f) {
-		const thisFile = join(dir, file);
-		const stat = await fs.stat(thisFile);
-		if (stat.isDirectory()) {
-			const key = getKeyFromFile(file);
-			if (!key) continue;
-			files[key] = (await fs.readdir(thisFile)).map((p) => join(thisFile, p));
-		} else {
-			const key = getKeyFromFile(file.split('.')[0]);
-			if (!key) continue;
-			files[key] = thisFile;
+	const reports: FilesList = {
+		'Weekly Payroll': { files: [] },
+		'Weekly Transfers': { files: [] },
+	};
+	for (const reportType of Reports) {
+		const reportTypeDir = join(dir, reportType);
+		if (!(await exists(reportTypeDir))) await fs.mkdirp(reportTypeDir);
+		const files = await fs.readdir(reportTypeDir);
+		for (const f of files) {
+			const p = join(reportTypeDir, f);
+			const stat = await fs.stat(p);
+			if (!stat.isDirectory()) {
+				reports[reportType].files.push(f);
+				continue;
+			}
+			const fFiles = await fs.readdir(p);
+			reports[reportType][f] = fFiles;
 		}
 	}
-	return files;
+
+	return reports;
 }

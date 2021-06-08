@@ -13,7 +13,7 @@
     "buildEnvTypes": "node scripts/buildEnvTypes.js",
     "build": "node scripts/build.js",
     "precompile": "cross-env MODE=production npm run build",
-    "compile": "electron-builder build --config electron-builder.config.js --dir --config.asar=false",
+    "compile": "electron-builder build --config electron-builder.config.js --dir",
     "pretest": "cross-env MODE=test npm run build",
     "test": "node tests/app.spec.js",
     "watch": "node scripts/watch.js",
@@ -22,7 +22,8 @@
     "typecheck-main": "tsc --noEmit -p packages/main/tsconfig.json",
     "typecheck-preload": "tsc --noEmit -p packages/preload/tsconfig.json",
     "typecheck-renderer": "vue-tsc --noEmit -p packages/renderer/tsconfig.json",
-    "typecheck": "npm run typecheck-main && npm run typecheck-preload && npm run typecheck-renderer"
+    "typecheck": "npm run typecheck-main && npm run typecheck-preload && npm run typecheck-renderer",
+    "postinstall": "electron-builder install-app-deps"
   },
   "browserslist": [
     "Chrome 89"
@@ -40,6 +41,7 @@
     "@types/fs-extra": "^9.0.11",
     "@types/mathjs": "^6.0.12",
     "@types/numeral": "^2.0.1",
+    "@types/string-similarity": "^4.0.0",
     "@types/tabulator-tables": "^4.9.1",
     "@typescript-eslint/eslint-plugin": "^4.22.0",
     "@vitejs/plugin-vue": "^1.2.2",
@@ -79,6 +81,7 @@
     "popper.js": "^1.16.1",
     "sass": "^1.32.12",
     "simple-statistics": "^7.7.0",
+    "string-similarity": "^4.0.4",
     "tabulator-tables": "^4.9.3",
     "universal-analytics": "^0.4.23",
     "uuid": "^8.3.2",

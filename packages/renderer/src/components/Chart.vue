@@ -92,7 +92,7 @@ export default defineComponent({
 		const presets = this.presets[sheet];
 		if (!presets || presets.length === 0) return;
 
-		console.log(presets);
+		// console.log(presets);
 		let invalidPreset = true;
 		for (const p of presets) {
 			if (p.title !== preset) continue;
@@ -104,7 +104,11 @@ export default defineComponent({
 			this.preset = presets[0].title;
 		}
 
-		this.createChart();
+		try {
+			this.createChart();
+		} catch (e) {
+			console.log('swallowed chart error');
+		}
 	},
 	mounted() {
 		this.createChart();

@@ -19,6 +19,12 @@ const routes = [
 		component: () => import('@/pages/reports/WeeklyPayroll/WeeklyPayroll.vue'),
 	},
 	{
+		path: '/report/weekly-transfers',
+		name: 'Weekly Transfers',
+		component: () =>
+			import('@/pages/reports/WeeklyTransfers/WeeklyTransfers.vue'),
+	},
+	{
 		path: '/report/billing-tn',
 		name: 'Billing Report',
 		component: () => import('@/pages/reports/Billing/Billing.vue'),

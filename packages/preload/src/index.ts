@@ -3,8 +3,9 @@ import remote from '@electron/remote';
 import * as fs from 'fs-extra';
 import * as path from 'path';
 import { exists } from '../../main/src/fs';
+import { store } from '../../main/src/store';
 
-const { dialog } = remote;
+const { dialog, shell } = remote;
 
 const apiKey = 'electron';
 /**
@@ -21,6 +22,17 @@ const api: ElectronApi = {
 	addListener: ipcRenderer.addListener.bind(ipcRenderer),
 	bufferFrom: Buffer.from.bind(Buffer),
 	exists,
+	resolveFile: ({ report, file, reportName }) => {
+		const dir = store.get('dir');
+		const parts = [dir, report];
+		if (reportName) parts.push(reportName);
+		if (file) parts.push(file);
+		return path.resolve(...parts);
+	},
+	mkdirp: fs.mkdirp.bind(fs),
+	openFolder: async (folderPath) => {
+		shell.openPath(folderPath);
+	},
 };
 
 if (import.meta.env.MODE !== 'test') {

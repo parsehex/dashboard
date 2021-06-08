@@ -1,7 +1,7 @@
 <template>
 	<div class="content">
 		<div>
-			<choose-file file-type="TNBillingStatement" @pick-file="go" />
+			<choose-file file-type="TNBillingStatement" @pick-file="file = $event" />
 		</div>
 		<div v-if="loaded" class="container-container">
 			<tabs :tab-list="['Spreadsheet', 'Chart']">
@@ -41,6 +41,7 @@ import process from './process';
 import { DataMode } from './data/table';
 import ChooseFile from '@/components/ChooseFile.vue';
 import Tabs from '@/components/common/Tabs.vue';
+import { BlankBuffer } from '@/lib/const';
 
 export default defineComponent({
 	name: 'Billing',
@@ -53,7 +54,7 @@ export default defineComponent({
 		}
 		return {
 			option: '',
-			file: '',
+			file: BlankBuffer,
 			loaded: false,
 			report,
 			sheet: '% Collected' as DataMode,
@@ -63,11 +64,14 @@ export default defineComponent({
 		cols: () => Columns,
 		presets: () => Presets,
 	},
-	methods: {
-		async go(file: string) {
-			this.file = file;
-			this.report = await process(this.file);
-			this.loaded = true;
+	watch: {
+		file: {
+			async handler() {
+				console.log('d');
+				if (this.file === BlankBuffer) return;
+				this.report = await process(this.file);
+				this.loaded = true;
+			},
 		},
 	},
 });

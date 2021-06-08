@@ -23,6 +23,22 @@ const dictionary: Files = {
 			key: 'PayrollOptions',
 		},
 	},
+	// @ts-ignore: i have no clue what the type checker is talking about
+	PNCDepositActivity: {
+		name: {
+			print: 'PNC Deposit Activity',
+			file: 'PNC_Deposit_Activity',
+			key: 'PNCDepositActivity',
+		},
+	},
+	// @ts-ignore: i have no clue what the type checker is talking about
+	PayrollSummary: {
+		name: {
+			print: 'Payroll Summary',
+			file: 'Payroll_Summary',
+			key: 'PayrollSummary',
+		},
+	},
 };
 const keys = Object.keys(dictionary) as SupportedFileType[];
 // @ts-ignore: i have no clue what the type checker is talking about

@@ -1,26 +1,37 @@
-import validatePayrollOptions from './PayrollOptions';
-import validateTNBillingStatement from './TNBillingStatement';
-import validateTSheetsHoursReport from './TSheetsHoursReport';
+import PayrollOptions from './PayrollOptions';
+import PNCDepositActivity from './PNCDepositActivity';
+import TNBillingStatement from './TNBillingStatement';
+import TSheetsHoursReport from './TSheetsHoursReport';
 
-export function validateFile(fileType: SupportedFileType, data: Buffer) {
+export function validateFile(
+	fileType: SupportedFileType,
+	data: Buffer | string
+) {
 	switch (fileType) {
 		case 'PayrollOptions': {
 			try {
-				return validatePayrollOptions(data);
+				return PayrollOptions.validate(data);
 			} catch (e) {
 				return false;
 			}
 		}
 		case 'TNBillingStatement': {
 			try {
-				return validateTNBillingStatement(data);
+				return TNBillingStatement.validate(data);
 			} catch (e) {
 				return false;
 			}
 		}
 		case 'TSheetsHoursReport': {
 			try {
-				return validateTSheetsHoursReport(data);
+				return TSheetsHoursReport.validate(data);
+			} catch (e) {
+				return false;
+			}
+		}
+		case 'PNCDepositActivity': {
+			try {
+				return PNCDepositActivity.validate(data);
 			} catch (e) {
 				return false;
 			}

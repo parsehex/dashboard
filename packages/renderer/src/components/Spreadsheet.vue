@@ -91,10 +91,11 @@ export default defineComponent({
 				const r = reports[i];
 
 				const sheet = xlsx.utils.json_to_sheet(r);
+
 				xlsx.utils.book_append_sheet(wb, sheet, sheetNames[i]);
 			}
 
-			const d = xlsx.write(wb, { bookType: 'xlsx', type: 'file' });
+			const d = xlsx.write(wb, { bookType: 'csv', type: 'string' });
 			await saveFile(d, this.fileName);
 		},
 	},

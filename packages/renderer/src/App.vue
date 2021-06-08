@@ -40,7 +40,7 @@ export default defineComponent({
 			display: flex;
 			flex-direction: column;
 
-			& > :last-child:not(:first-child) {
+			& > :last-child:not(:first-child):not(.choose-file):not(.files) {
 				flex-grow: 1;
 
 				display: flex;
@@ -59,5 +59,9 @@ export default defineComponent({
 	font-size: 0.875rem;
 	line-height: 0.5;
 	border-radius: 0.2rem;
+}
+.sep {
+	cursor: default;
+	user-select: none;
 }
 </style>

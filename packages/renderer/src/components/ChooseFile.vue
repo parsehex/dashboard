@@ -1,15 +1,17 @@
 <template>
-	<div>
-		{{ fileTypeLabel }}:
-		<dropdown :actions="dropdownActions" :btn-label="label || 'Choose file'" />
-		<a
-			v-if="fileError.shown"
-			class="btn btn-link btn-danger text-white"
-			:href="'/help/' + fileType + '.html'"
-			target="_blank"
-		>
-			{{ fileError.label }}
-		</a>
+	<div class="choose-file">
+		<div class="label">
+			<span>{{ fileTypeLabel }}</span>
+			<a
+				v-if="fileError.shown"
+				class="btn btn-link btn-sm btn-danger text-white"
+				:href="'/help/' + fileType + '.html'"
+				target="_blank"
+			>
+				{{ fileError.label }}
+			</a>
+		</div>
+		<dropdown :actions="dropdownActions" :btn-label="label" />
 	</div>
 </template>
 
@@ -25,8 +27,16 @@ import Dropdown from './common/Dropdown.vue';
 import FileTypes from '../../../main/src/file-types';
 import { validateFile } from '@/lib/io/validate-file';
 import { addToHistory } from '@/lib/io/file-history';
-const { path, readFile } = useElectron();
+import { BlankBuffer } from '@/lib/const';
+import state from '@/state';
+const { path, readFile, resolveFile } = useElectron();
 
+interface FileObject {
+	/** The absolute path to the file */
+	value: string;
+	/** The file name + ext */
+	label: string;
+}
 export default defineComponent({
 	name: 'ChooseFile',
 	components: { Dropdown },
@@ -35,13 +45,24 @@ export default defineComponent({
 			type: String as PropType<SupportedFileType>,
 			required: true,
 		},
+		report: {
+			type: String as PropType<ReportType>,
+			required: true,
+		},
+		reportName: {
+			type: String,
+			default: '',
+		},
+		commonFile: {
+			type: Boolean,
+			default: false,
+		},
 	},
-	emits: ['pick-file'],
+	emits: ['pick-file', '404'],
 	data: (props) => ({
 		hist: recentlyOpenedFiles(props.fileType),
 		option: '',
-		label: '',
-		fileData: null as any,
+		fileData: BlankBuffer,
 		fileError: {
 			shown: false,
 			label: 'Wrong File Type',
@@ -49,16 +70,47 @@ export default defineComponent({
 		},
 	}),
 	computed: {
+		label() {
+			if (!this.option) return 'Choose file';
+			const p = path.parse(this.option);
+			return p.base;
+		},
+		bestFileMatch() {
+			// rank each file option based on heuristics
+			// return best match
+			const results: { file: FileObject; score: number }[] =
+				this.fileHistory.map((file) => ({
+					file,
+					score: +validateFile(this.fileType, file.label),
+				}));
+			results.sort((a, b) => b.score - a.score);
+			return results[0]?.score > 0 ? results[0] : undefined;
+		},
 		fileTypeLabel(): string | string[] {
 			// @ts-ignore: vetur error (probably bug)
 			return FileTypes.dictionary[this.fileType].name.print;
 		},
-		fileHistory(): { value: string; label: string }[] {
-			// @ts-ignore: this error is incorrect (this.hist is a getter not a function)
-			return this.hist.map((f) => {
+		fileHistory(): FileObject[] {
+			let files: string[] = [];
+			if (!this.reportName || this.commonFile) {
+				files = state.dataFiles[this.report].files;
+			} else {
+				files = state.dataFiles[this.report][this.reportName];
+			}
+			if (!files) return [];
+
+			const results = files.map((f) => {
 				const p = path.parse(f);
-				return { value: f, label: p.base };
+				return {
+					value: resolveFile({
+						report: this.report,
+						file: f,
+						reportName: this.commonFile ? undefined : this.reportName,
+					}),
+					label: p.base,
+				};
 			});
+			return results;
 		},
 		dropdownActions(): DropdownActions {
 			const actions: DropdownActions = this.fileHistory.map((f) => ({
@@ -67,7 +119,7 @@ export default defineComponent({
 					this.option = f.value;
 					this.label = f.label;
 					await this.loadFile();
-					this.go();
+					this.emitPick();
 				},
 			}));
 			actions.push({
@@ -81,15 +133,69 @@ export default defineComponent({
 		},
 	},
 	async mounted() {
-		await this.updateHistory();
-		if (this.hist.length > 0) {
-			this.dropdownActions[0].onClick();
+		if (!this.bestFileMatch) {
+			this.resetAll();
+			return;
 		}
+
+		if (!this.bestFileMatch) return;
+
+		const f = this.bestFileMatch.file;
+		this.option = f.value;
+		await this.loadFile();
+		if (await this.loadFile()) this.emitPick();
+	},
+	async updated() {
+		if (this.option && this.fileHistory.length === 0) {
+			this.resetAll();
+			return;
+		}
+
+		const bestMatch = this.bestFileMatch;
+		if (!bestMatch?.file.value || bestMatch.file.value === this.option) return;
+
+		this.option = bestMatch.file.value;
+
+		if (await this.loadFile()) this.emitPick();
 	},
 	methods: {
-		popError(e: string) {
+		async loadFile() {
+			try {
+				this.fileData = await readFile(this.option);
+				const isCorrectContent = validateFile(this.fileType, this.fileData);
+				// console.log(isCorrectContent);
+				if (!isCorrectContent) throw 'Wrong file type';
+				this.resetError();
+				return true;
+			} catch (e) {
+				// console.log(e);
+				this.resetAll();
+				this.errorWrongFileType();
+				this.$emit('404');
+				return false;
+			}
+		},
+		showError(e: string) {
 			this.fileError.label = e;
 			this.fileError.shown = true;
+		},
+		resetOption() {
+			this.option = '';
+			this.fileData = BlankBuffer;
+		},
+		resetError() {
+			this.fileError.label = '';
+			this.fileError.shown = false;
+		},
+		resetAll() {
+			this.resetOption();
+			this.resetError();
+		},
+		errorFileNotFound() {
+			this.showError('File Not Found');
+		},
+		errorWrongFileType() {
+			this.showError('Wrong File Type');
 		},
 		async updateHistory() {
 			this.hist = await recentlyOpenedFilesClean(this.fileType);
@@ -100,32 +206,29 @@ export default defineComponent({
 				title: `Choose a ${this.fileTypeLabel} file`,
 			});
 			if (pickedFile === false) return;
-			const p = path.parse(pickedFile);
-			this.label = p.base;
 			this.option = pickedFile;
 
-			await this.loadFile();
-			if (!this.validateFile()) {
-				this.popError('Wrong File Type');
-				this.label = '';
-				this.option = '';
-				this.fileData = '';
-				return;
-			}
-			this.fileError.shown = false;
+			if (await this.loadFile()) this.emitPick();
 			addToHistory(this.fileType, pickedFile);
 
 			await this.updateHistory();
 		},
-		async loadFile() {
-			this.fileData = await readFile(this.option);
-		},
-		go() {
+
+		emitPick() {
+			if (this.fileData === BlankBuffer) return;
 			this.$emit('pick-file', this.fileData);
-		},
-		validateFile() {
-			return validateFile(this.fileType, this.fileData);
 		},
 	},
 });
 </script>
+
+<style lang="scss">
+.choose-file {
+	display: inline-flex;
+	flex-direction: column;
+
+	.label {
+		display: flex;
+	}
+}
+</style>

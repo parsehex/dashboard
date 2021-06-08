@@ -1,13 +1,13 @@
 import { app, BrowserWindow, ipcMain, dialog } from 'electron';
-import { join } from 'path';
+import { join, resolve } from 'path';
 import { URL } from 'url';
 // import Chalk from 'chalk';
-import logger from 'electron-log';
 import { store } from './store';
 import { setupWindowEvents } from './window-events';
 // import * as fs from 'fs-extra';
 import state from './state';
 import { writeFile } from 'fs-extra';
+import { fetchFiles, setupDir } from './dir';
 require('@electron/remote/main').initialize();
 
 const isSingleInstance = app.requestSingleInstanceLock();
@@ -16,6 +16,9 @@ if (!isSingleInstance) {
 	app.quit();
 	process.exit(0);
 }
+
+const dataDir = resolve(process.cwd(), '../Data');
+store.set('dir', dataDir);
 
 const env = import.meta.env;
 
@@ -34,6 +37,8 @@ ipcMain.handle('save-as', async (event, { fileName, d }: any) => {
 	const file = f.filePath;
 	await writeFile(file, d);
 });
+
+ipcMain.handle('get-files', async () => await fetchFiles());
 
 const createWindow = async () => {
 	const winSettings = store.get('window');
@@ -92,7 +97,6 @@ app.on('ready', async () => {
 	// const appName = app.getName();
 	// const getAppPath = join(app.getPath('appData'), appName);
 	// await unlink(getAppPath);
-
 	if (env.MODE !== 'production') {
 		require('vue-devtools').install();
 	}
@@ -104,17 +108,21 @@ app.on('ready', async () => {
 		console.error('Failed to create window:', e);
 	}
 
-	if (env.PROD) await tryUpdate();
+	// if (env.PROD) await tryUpdate();
 });
 
-async function tryUpdate() {
-	const { autoUpdater } = await import('electron-updater');
-	autoUpdater.logger = logger;
+// async function tryUpdate() {
+// 	const { autoUpdater } = await import('electron-updater');
+// 	autoUpdater.logger = logger;
 
-	console.log(`Dashboard v${autoUpdater.currentVersion.version}`);
-	try {
-		await autoUpdater.checkForUpdatesAndNotify();
-	} catch (e) {
-		console.error('Failed update check:', e);
-	}
-}
+// 	console.log(`Dashboard v${autoUpdater.currentVersion.version}`);
+// 	try {
+// 		await autoUpdater.checkForUpdatesAndNotify();
+// 	} catch (e) {
+// 		console.error('Failed update check:', e);
+// 	}
+// }
+
+(async () => {
+	await setupDir();
+})();

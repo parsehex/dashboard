@@ -61,11 +61,3 @@ export default defineComponent({
 	},
 });
 </script>
-
-<style lang="scss">
-// .dropdown {
-// 	ul a {
-// 		cursor: default;
-// 	}
-// }
-</style>

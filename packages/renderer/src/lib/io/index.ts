@@ -6,6 +6,7 @@ import { getLSKey, recentlyOpenedFiles } from './file-history';
 export const FileFilters: { [ext: string]: Electron.FileFilter } = {
 	png: { name: 'PNG files', extensions: ['png'] },
 	xlsx: { name: 'XLSX files', extensions: ['xlsx'] },
+	csv: { name: 'CSV files', extensions: ['csv'] },
 };
 
 export async function chartToBuffer(chart: Chart) {

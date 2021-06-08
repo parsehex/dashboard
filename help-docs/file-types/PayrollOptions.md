@@ -57,6 +57,8 @@ For example, Medicare patients that are billed as a different counselor than the
 
 The hourly rates for each employee. You can set the rate for Admin hours, Clin hours, or just set the IOP rate manually.
 
+This table is used as a source for the list of employees, so it should be kept up to date to minimize discrepencies. Precautions have been taken to ensure
+
 ### IOP Rate
 
 The IOP Rate for an employee is calculated using one the columns in this table. You can manually set the IOP Rate by setting the `IOP` column. If there's no `IOP` set, then the `Clin` column is used as the IOP Rate. If there's no `Clin` value, then `Admin` column is used.

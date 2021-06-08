@@ -1,5 +1,4 @@
 import xlsx from 'xlsx';
-import { useElectron } from '@/lib/use-electron';
 import { Columns, Report } from './ReportDef';
 import { Appointment, parseAppointments } from './data/parse';
 import { DataMode } from './data/table';
@@ -17,10 +16,8 @@ import { filterAppointments } from './data/filter';
 
 const Modes = Object.keys(Columns);
 
-export default async function (input: string): Promise<Report> {
-	const { readFile } = useElectron();
-	const data = await readFile(input);
-	const wb = xlsx.read(data, { type: 'array' });
+export default async function (input: Buffer): Promise<Report> {
+	const wb = xlsx.read(input, { type: 'array' });
 
 	const fileData: TherapyNotesRow[] = xlsx.utils.sheet_to_json(
 		wb.Sheets[wb.SheetNames[0]]

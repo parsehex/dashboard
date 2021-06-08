@@ -1,4 +1,5 @@
 import numeral from 'numeral';
+import stringSimilarity from 'string-similarity';
 
 export function generateID() {
 	return '' + Math.random().toString(36).substr(2, 9);
@@ -135,4 +136,28 @@ export function strToId(s: string) {
 		.toLowerCase()
 		.replaceAll(' ', '-')
 		.replaceAll(/['".,[\]]/g, '');
+}
+
+export function areNamesEqual(name1: string, name2: string) {
+	const arr1 = name1.split(' ');
+	const arr2 = name2.split(' ');
+
+	const Name1 = {
+		first: arr1[0].toLowerCase(),
+		last: arr1[arr1.length - 1].toLowerCase(),
+	};
+	const Name2 = {
+		first: arr2[0].toLowerCase(),
+		last: arr2[arr2.length - 1].toLowerCase(),
+	};
+
+	if (Name1.last !== Name2.last) return false;
+	if (!firstNamesEqual(Name1.first, Name2.first)) return false;
+	return true;
+}
+
+function firstNamesEqual(name1: string, name2: string, threshold = 0.5) {
+	if (name1 !== name2) return false;
+	const similarity = stringSimilarity.compareTwoStrings(name1, name2);
+	return similarity >= threshold;
 }

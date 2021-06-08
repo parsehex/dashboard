@@ -17,7 +17,7 @@
 					role="tab"
 					@click="active = tab"
 				>
-					{{ tab }}
+					{{ tab[0].toUpperCase() + tab.slice(1) }}
 				</button>
 			</li>
 		</ul>

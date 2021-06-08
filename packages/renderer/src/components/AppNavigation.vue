@@ -1,7 +1,10 @@
 <template>
 	<container fluid>
 		<tree-view :tree="tree" />
-		<a href="/help/index.html" class="btn btn-info" target="_blank">Help</a>
+		<btn type="warning" size="sm" @click="reload">Reload</btn>
+		<a href="/help/index.html" class="btn btn-info btn-sm" target="_blank">
+			Help
+		</a>
 		<btn v-if="pdfCharts.length > 0" type="success">
 			Save {{ pdfCharts.length }} Chart{{ pdfCharts.length > 1 ? 's' : '' }} as
 			PDF
@@ -24,6 +27,10 @@ const tree: TreeView = [
 				href: 'payroll',
 			},
 			{
+				text: 'Weekly Transfers',
+				href: 'weekly-transfers',
+			},
+			{
 				text: 'Payroll Hours Breakdown',
 				href: 'payroll-hours',
 			},
@@ -41,6 +48,11 @@ export default defineComponent({
 	data: () => ({ tree }),
 	computed: {
 		pdfCharts: () => state.chartsToExport,
+	},
+	methods: {
+		reload: () => {
+			window.location.reload();
+		},
 	},
 });
 </script>

@@ -1,47 +1,11 @@
 import xlsx from 'xlsx';
-import { colDef } from '@/lib/utils';
+import { areNamesEqual } from '@/lib/utils';
 
-interface EmployeeRow {
-	Name: string;
-	'Vaca Hrs': number;
-	'Admin Hrs': number;
-	'Admin Rate': number;
-	'Admin Gross': number;
-	'Clin Hrs': number;
-	'Clin Rate': number;
-	'Clin Gross': number;
-	'IOP Rate': number;
-	'IOP Reg Hrs': number;
-	'Total Hrs': number;
-	'Total Gross': number;
-}
-export type Report = { Employees: EmployeeRow[] };
-
-export const Columns: TabulatorSpreadsheetColumnDefs = {
-	Employees: [
-		colDef('Name'),
-		colDef('Vaca Hrs'),
-		colDef('Admin Hrs'),
-		colDef('Admin Rate'),
-		colDef('Admin Gross'),
-		colDef('Clin Hrs'),
-		colDef('Clin Rate'),
-		colDef('Clin Gross'),
-		colDef('IOP Rate'),
-		colDef('IOP Reg Hrs'),
-		colDef('Total Hrs'),
-		colDef('Total Gross'),
-	],
-};
-
-interface ReportFilePaths {
-	options: Buffer;
-	hours: Buffer;
-	billing: Buffer;
-}
-
-export default async function (input: ReportFilePaths): Promise<Report> {
-	const files: any = {
+export default async function (
+	input: WeeklyPayroll.InputFilesArg
+): Promise<WeeklyPayroll.Report> {
+	console.groupCollapsed('process payroll');
+	const files: WeeklyPayroll.InputFiles = {
 		billing: [],
 		medicare: [],
 		hours: [],
@@ -51,9 +15,9 @@ export default async function (input: ReportFilePaths): Promise<Report> {
 		aliases: [],
 	};
 
-	const billingWb = xlsx.read(input.billing, { type: 'array' });
-	const hoursWb = xlsx.read(input.hours, { type: 'array' });
-	const optionsWb = xlsx.read(input.options, { type: 'array' });
+	const billingWb = xlsx.read(input.billing, { type: 'array' }); // tn billing statement
+	const hoursWb = xlsx.read(input.hours, { type: 'array' }); // tsheets hours report
+	const optionsWb = xlsx.read(input.options, { type: 'array' }); // payroll options
 
 	files.billing = xlsx.utils.sheet_to_json(
 		billingWb.Sheets[billingWb.SheetNames[0]]
@@ -100,28 +64,28 @@ export default async function (input: ReportFilePaths): Promise<Report> {
 	if (optionsWb.SheetNames.includes('Aliases'))
 		files.aliases = xlsx.utils.sheet_to_json(optionsWb.Sheets['Aliases']);
 
-	const report: Report = {
+	const report: WeeklyPayroll.Report = {
 		Employees: [],
 	};
 
-	const resolveAlias = (n: string) => {
-		for (const a of files.aliases) {
-			if (a.Alias === n) return a.Name;
+	const resolveAlias = (name: string) => {
+		for (const alias of files.aliases) {
+			if (areNamesEqual(name, alias.Alias)) return alias.Name;
 		}
 
 		// no alias found
-		return n;
+		return name;
 	};
 
 	const findEmp = (Name: string) => {
 		Name = resolveAlias(Name);
 
-		for (const e of report.Employees) {
-			if (e.Name === Name) return e;
+		for (const emp of report.Employees) {
+			if (areNamesEqual(Name, emp.Name)) return emp;
 		}
 
 		// if employee can't be found, create one and add it
-		const e: EmployeeRow = {
+		const e: WeeklyPayroll.EmployeeRow = {
 			Name,
 			'Vaca Hrs': 0,
 			'Admin Hrs': 0,
@@ -139,17 +103,13 @@ export default async function (input: ReportFilePaths): Promise<Report> {
 		return e;
 	};
 	const lookupMedicare = (
-		/** Format: "FIRST LAST" */
 		patientName: string,
 		counselor: string
 	): string | false => {
 		for (const row of files.medicare) {
-			const pNameArr = row['Patient Name'].split(' ');
-			const patientFirst_Last =
-				pNameArr[0] + ' ' + pNameArr[pNameArr.length - 1];
 			if (
-				patientFirst_Last.toLowerCase() === patientName.toLowerCase() &&
-				counselor === row['Billing Counselor']
+				areNamesEqual(patientName, row['Patient Name']) &&
+				areNamesEqual(counselor, row['Billing Counselor'])
 			)
 				return row['Rendering Counselor'];
 		}
@@ -158,40 +118,39 @@ export default async function (input: ReportFilePaths): Promise<Report> {
 	const getLimit = (name: string) => {
 		name = resolveAlias(name);
 
-		for (const l of files.limits) {
-			if (l.Name === name) return l.Limit;
+		for (const limit of files.limits) {
+			if (areNamesEqual(name, limit.Name)) return +limit.Limit;
 		}
 		return false;
 	};
 	const isSalaried = (name: string) => {
 		name = resolveAlias(name);
 
-		for (const e of files.salaried) {
-			if (e.Name === name) return true;
+		for (const emp of files.salaried) {
+			if (areNamesEqual(name, emp.Name)) return true;
 		}
 		return false;
 	};
 
-	for (const e of files.rates) {
-		const E = findEmp(e.Name);
-		console.log(e.Name);
-		E['Admin Rate'] = e.Admin;
-		E['Clin Rate'] = e.Clin;
+	for (const rate of files.rates) {
+		const E = findEmp(rate.Name);
+		E['Admin Rate'] = rate.Admin;
+		E['Clin Rate'] = rate.Clin;
 
 		// use IOP col if theres a value
 		// otherwise use Clin
 		// otherwise use Admin
-		E['IOP Rate'] = e.IOP ? e.IOP : e.Clin || e.Admin;
+		E['IOP Rate'] = rate.IOP ? rate.IOP : rate.Clin || rate.Admin;
 	}
 
-	for (const e of files.hours) {
-		const name = e.fname + ' ' + e.lname;
+	for (const hour of files.hours) {
+		const name = hour.fname + ' ' + hour.lname;
 		const E = findEmp(name);
 
-		if (e.type === 'REG') {
-			E['Admin Hrs'] = e.hours;
+		if (hour.type === 'REG') {
+			E['Admin Hrs'] = hour.hours;
 		} else {
-			E['Vaca Hrs'] = e.hours;
+			E['Vaca Hrs'] = hour.hours;
 		}
 	}
 
@@ -202,6 +161,9 @@ export default async function (input: ReportFilePaths): Promise<Report> {
 		const E = realCounselor
 			? findEmp(realCounselor)
 			: findEmp(appt['Clinician Name']);
+		if (realCounselor) {
+			console.log('rewrote', appt['Clinician Name'], 'to', realCounselor);
+		}
 
 		let hrs = 0;
 		if (appt['Service Code'] === '90832') hrs = 0.5;
@@ -222,7 +184,6 @@ export default async function (input: ReportFilePaths): Promise<Report> {
 
 		if (E['Admin Hrs']) {
 			E['Admin Gross'] = E['Admin Hrs'] * E['Admin Rate'];
-			E['Admin Gross'] = +E['Admin Gross'].toFixed(2);
 		}
 		if (E['Clin Hrs']) {
 			E['Clin Gross'] = E['Clin Hrs'] * E['Clin Rate'];
@@ -234,10 +195,12 @@ export default async function (input: ReportFilePaths): Promise<Report> {
 
 		// tidy up rounding errors
 		E['Total Hrs'] = +E['Total Hrs'].toFixed(2);
+		E['Admin Gross'] = +E['Admin Gross'].toFixed(2);
 		E['Clin Gross'] = +E['Clin Gross'].toFixed(2);
 		E['Total Gross'] = +E['Total Gross'].toFixed(2);
 		E['IOP Reg Hrs'] = +E['IOP Reg Hrs'].toFixed(2);
 	}
+	console.groupEnd();
 
 	return report;
 }

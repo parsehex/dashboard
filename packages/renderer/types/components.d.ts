@@ -75,3 +75,9 @@ interface DropdownAction {
 	label: string;
 }
 type DropdownActions = DropdownAction[];
+
+interface ReportDep {
+	type: SupportedFileType;
+	key: string;
+	common?: boolean;
+}
