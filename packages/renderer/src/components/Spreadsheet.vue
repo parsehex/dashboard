@@ -15,7 +15,9 @@
 					{{ s }}
 				</li>
 			</ul>
-			<btn type="success" @click.capture="download">Download All Sheets</btn>
+			<btn type="info" @click.capture="download">
+				<icon type="download" :size="18" />
+			</btn>
 		</div>
 	</div>
 </template>

@@ -7,7 +7,7 @@ export const store = new Store<AppStore>({
 			y: 0,
 			width: 800,
 			height: 600,
-			maximized: false,
+			maximized: true,
 		},
 		dir: '',
 	},

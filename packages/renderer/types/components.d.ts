@@ -55,6 +55,11 @@ interface TabulatorSpreadsheetColumnDefs {
 	[sheetName: string]: TabulatorColumnDefinition[];
 }
 
+type ReportOptions = {
+	type: 'date' | 'text';
+	key: string;
+	label: string;
+}[];
 interface ChartPresets {
 	[sheetName: string]: ChartComponentConfigPreset[];
 }

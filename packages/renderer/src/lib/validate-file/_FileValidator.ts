@@ -7,11 +7,11 @@ export default class FileValidator {
 
 	protected static checkSheetNames(wb: xlsx.WorkBook) {
 		const { SheetNames } = wb;
-		for (const s of this.Sheets) {
-			const isRegex = s[0] === '/' && s[s.length - 1] === '/';
+		for (const s of SheetNames) {
 			let doesMatch = false;
+			const isRegex = s[0] === '/' && s[s.length - 1] === '/';
 			if (isRegex) {
-				const r = new RegExp(s);
+				const r = new RegExp(s.replace(/\//g, ''));
 				const results = SheetNames.map((sh) => r.test(sh));
 				doesMatch = results.includes(true);
 			} else {

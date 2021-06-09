@@ -14,6 +14,7 @@ const dictionary: Files = {
 			file: 'TSheets_Hours_Report',
 			key: 'TSheetsHoursReport',
 		},
+		help: 'file-types/TSheetsHoursReport',
 	},
 	// @ts-ignore: i have no clue what the type checker is talking about
 	PayrollOptions: {
@@ -22,6 +23,7 @@ const dictionary: Files = {
 			file: 'Payroll_Options',
 			key: 'PayrollOptions',
 		},
+		help: 'file-types/PayrollOptions',
 	},
 	// @ts-ignore: i have no clue what the type checker is talking about
 	PNCDepositActivity: {

@@ -4,6 +4,7 @@ import { chrome } from '../../electron-vendors.config.json';
 import { join } from 'path';
 import { defineConfig } from 'vite';
 import vue from '@vitejs/plugin-vue';
+import svgLoader from 'vite-svg-loader';
 import { loadAndSetEnv } from '../../scripts/loadAndSetEnv.mjs';
 
 const PACKAGE_ROOT = __dirname;
@@ -24,7 +25,7 @@ export default defineConfig({
 			'@/': join(PACKAGE_ROOT, 'src') + '/',
 		},
 	},
-	plugins: [vue()],
+	plugins: [vue(), svgLoader()],
 	base: '',
 	build: {
 		sourcemap: true,

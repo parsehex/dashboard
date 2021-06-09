@@ -53,6 +53,7 @@ export default defineComponent({
 		}
 	}
 }
+
 .btn-group-xs > .btn,
 .btn-xs {
 	padding: 0.25rem 0.4rem;
@@ -60,8 +61,12 @@ export default defineComponent({
 	line-height: 0.5;
 	border-radius: 0.2rem;
 }
+
 .sep {
 	cursor: default;
 	user-select: none;
+}
+.hidden {
+	visibility: hidden;
 }
 </style>

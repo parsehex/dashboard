@@ -18,6 +18,8 @@ interface FileType {
 		/** Name that should be used in keys for this file type */
 		key: SupportedFileType;
 	};
+	/** Link to help page */
+	help?: string;
 }
 interface _Files {
 	[DataSource: string]: FileType;
@@ -45,7 +47,13 @@ interface ReportFolder {
 interface FilesList {
 	'Weekly Payroll': ReportFolder;
 	'Weekly Transfers': ReportFolder;
+	// 'Payroll Hours Breakdown': ReportFolder;
+	'Revenue Per Session': ReportFolder;
 	[ReportType: string]: ReportFolder;
 }
 
-type ReportType = 'Weekly Payroll' | 'Weekly Transfers';
+type ReportType =
+	| 'Weekly Payroll'
+	| 'Weekly Transfers'
+	// | 'Payroll Hours Breakdown'
+	| 'Revenue Per Session';

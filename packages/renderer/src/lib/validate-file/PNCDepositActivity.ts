@@ -1,12 +1,12 @@
 import FileValidator from './_FileValidator';
 
 export default class PNCDepositActivity extends FileValidator {
-	protected static NameRegex = /depositAcitivityExport-.*\.csv/;
-	protected static Sheets = ['depositActivityExport-*'];
+	protected static NameRegex = /depositActivityExport-.*\.csv/;
+	protected static Sheets = ['/depositActivityExport-.*/'];
 	protected static Columns = {
-		'depositActivityExport-*': [
+		'/depositActivityExport-.*/': [
 			'Date',
-			'Decription',
+			'Description',
 			'Withdrawals',
 			'Deposits',
 			'Balance',

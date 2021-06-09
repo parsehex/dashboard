@@ -9,7 +9,7 @@
 		stroke-linecap="round"
 		stroke-linejoin="round"
 	>
-		<use :xlink:href="'/feather-sprite.svg#' + type" />
+		<use :xlink:href="'../assets/feather-sprite.svg#' + type" />
 	</svg>
 </template>
 
@@ -25,7 +25,7 @@ export default defineComponent({
 		},
 		size: {
 			type: Number,
-			default: 32,
+			default: 16,
 		},
 	},
 });

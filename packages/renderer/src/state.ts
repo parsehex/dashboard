@@ -7,6 +7,7 @@ const { on, ipcRenderer } = useElectron();
 interface State {
 	chartsToExport: any[]; //chart config array
 	dataFiles: FilesList;
+	dir: string;
 }
 
 const state: State = reactive({
@@ -15,6 +16,7 @@ const state: State = reactive({
 		'Weekly Payroll': { files: [] },
 		'Weekly Transfers': { files: [] },
 	},
+	dir: '',
 });
 
 export default state;
@@ -26,6 +28,10 @@ export default state;
 		log('fs change', files);
 		Object.assign(state, { dataFiles: files });
 	});
-	const files = await ipcRenderer.invoke('get-files');
+	on('dir', (e, d: string) => {
+		state.dir = d;
+	});
+	const files = await ipcRenderer.invoke('get-all-files');
 	Object.assign(state, { dataFiles: files });
+	state.dir = await ipcRenderer.invoke('get-dir');
 })();

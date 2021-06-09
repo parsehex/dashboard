@@ -4,7 +4,10 @@ import process from './process';
 export const ReportName: ReportType = 'Weekly Transfers';
 
 export const Columns: TabulatorSpreadsheetColumnDefs = {
-	Employees: [colDef('Name'), colDef('Amount'), colDef('% of Total')],
+	'Weekly Transfers': [
+		colDef('Name'),
+		colDef('Amount', { formatter: 'money' }),
+	],
 };
 
 export const DefaultReport: WeeklyTransfers.Report = {
@@ -18,4 +21,9 @@ export const Processor = process;
 export const RequiredFiles: ReportDep[] = [
 	{ type: 'PNCDepositActivity', key: 'deposits' },
 	{ type: 'PayrollSummary', key: 'payroll' },
+];
+
+export const Options: ReportOptions = [
+	{ type: 'date', key: 'startDate', label: 'Start Date' },
+	{ type: 'date', key: 'endDate', label: 'End Date' },
 ];

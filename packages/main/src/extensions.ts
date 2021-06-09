@@ -1,12 +1,12 @@
 // import { app } from 'electron';
-// import installExtension, { VUEJS3_DEVTOOLS } from 'electron-devtools-installer';
+import installExtension, { VUEJS3_DEVTOOLS } from 'electron-devtools-installer';
 
 export async function installExtensions() {
+	// const { default: installExtension, VUEJS3_DEVTOOLS } = await import(
+	// 	'electron-devtools-installer'
+	// );
 	try {
-		const { default: installExtension, VUEJS3_DEVTOOLS } = await import(
-			'electron-devtools-installer'
-		);
-		const extName = await installExtension(VUEJS3_DEVTOOLS, {
+		const extName = await installExtension(VUEJS3_DEVTOOLS.id, {
 			loadExtensionOptions: {
 				allowFileAccess: true,
 			},

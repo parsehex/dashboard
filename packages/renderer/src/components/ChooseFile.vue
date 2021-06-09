@@ -2,14 +2,14 @@
 	<div class="choose-file">
 		<div class="label">
 			<span>{{ fileTypeLabel }}</span>
-			<a
-				v-if="fileError.shown"
-				class="btn btn-link btn-sm btn-danger text-white"
-				:href="'/help/' + fileType + '.html'"
-				target="_blank"
+			<help-link
+				v-if="helpPage"
+				class="btn btn-link btn-sm btn-info text-white"
+				:page="helpPage"
+				title="Learn more about this file"
 			>
-				{{ fileError.label }}
-			</a>
+				?
+			</help-link>
 		</div>
 		<dropdown :actions="dropdownActions" :btn-label="label" />
 	</div>
@@ -25,11 +25,11 @@ import {
 import { useElectron } from '@/lib/use-electron';
 import Dropdown from './common/Dropdown.vue';
 import FileTypes from '../../../main/src/file-types';
-import { validateFile } from '@/lib/io/validate-file';
+import { validateFile } from '@/lib/validate-file';
 import { addToHistory } from '@/lib/io/file-history';
 import { BlankBuffer } from '@/lib/const';
 import state from '@/state';
-const { path, readFile, resolveFile } = useElectron();
+const { path, readFile, resolveFile, move, copy } = useElectron();
 
 interface FileObject {
 	/** The absolute path to the file */
@@ -70,6 +70,9 @@ export default defineComponent({
 		},
 	}),
 	computed: {
+		helpPage(): string | undefined {
+			return FileTypes.dictionary[this.fileType].help;
+		},
 		label() {
 			if (!this.option) return 'Choose file';
 			const p = path.parse(this.option);
@@ -117,17 +120,17 @@ export default defineComponent({
 				label: f.label,
 				onClick: async () => {
 					this.option = f.value;
-					this.label = f.label;
 					await this.loadFile();
 					this.emitPick();
 				},
 			}));
 			actions.push({
-				label: 'Browse...',
-				onClick: async () => {
-					this.option = 'pick';
-					await this.pickFile();
-				},
+				label: 'Browse & Move file...',
+				onClick: async () => await this.pickAndMoveFile(),
+			});
+			actions.push({
+				label: 'Browse & Copy file...',
+				onClick: async () => await this.pickAndCopyFile(),
 			});
 			return actions;
 		},
@@ -200,12 +203,50 @@ export default defineComponent({
 		async updateHistory() {
 			this.hist = await recentlyOpenedFilesClean(this.fileType);
 		},
-		async pickFile() {
-			const pickedFile = await pickFile({
+		fileDestination() {
+			// where the file should go if the user browses for a file
+			const reportName = this.commonFile ? undefined : this.reportName;
+			return resolveFile({ report: this.report, reportName });
+		},
+		async pickAndMoveFile() {
+			let pickedFile = await pickFile({
 				// rememberKey: this.fileType,
 				title: `Choose a ${this.fileTypeLabel} file`,
 			});
 			if (pickedFile === false) return;
+
+			const d = await readFile(pickedFile);
+			const isCorrectContent = validateFile(this.fileType, d);
+			if (!isCorrectContent) return;
+
+			const filename = path.parse(pickedFile).base;
+			const dest = path.join(this.fileDestination(), filename);
+			await move(pickedFile, dest);
+			pickedFile = dest;
+
+			this.option = pickedFile;
+
+			if (await this.loadFile()) this.emitPick();
+			addToHistory(this.fileType, pickedFile);
+
+			await this.updateHistory();
+		},
+		async pickAndCopyFile() {
+			let pickedFile = await pickFile({
+				// rememberKey: this.fileType,
+				title: `Choose a ${this.fileTypeLabel} file`,
+			});
+			if (pickedFile === false) return;
+
+			const d = await readFile(pickedFile);
+			const isCorrectContent = validateFile(this.fileType, d);
+			if (!isCorrectContent) return;
+
+			const filename = path.parse(pickedFile).base;
+			const dest = path.join(this.fileDestination(), filename);
+			await copy(pickedFile, dest);
+			pickedFile = dest;
+
 			this.option = pickedFile;
 
 			if (await this.loadFile()) this.emitPick();

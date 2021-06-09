@@ -11,23 +11,22 @@ const routes = [
 	{
 		path: '/report/payroll-hours',
 		name: 'Payroll Hours Report',
-		component: () => import('@/pages/reports/Payroll/Payroll.vue'),
+		component: () => import('@/reports/PayrollHours/PayrollHours.vue'),
 	},
 	{
 		path: '/report/payroll',
-		name: 'Weekly Payroll',
-		component: () => import('@/pages/reports/WeeklyPayroll/WeeklyPayroll.vue'),
+		name: 'Weekly Payroll Report',
+		component: () => import('@/reports/WeeklyPayroll/WeeklyPayroll.vue'),
 	},
 	{
 		path: '/report/weekly-transfers',
-		name: 'Weekly Transfers',
-		component: () =>
-			import('@/pages/reports/WeeklyTransfers/WeeklyTransfers.vue'),
+		name: 'Weekly Transfers Report',
+		component: () => import('@/reports/WeeklyTransfers/WeeklyTransfers.vue'),
 	},
 	{
 		path: '/report/billing-tn',
 		name: 'Billing Report',
-		component: () => import('@/pages/reports/Billing/Billing.vue'),
+		component: () => import('@/reports/Billing/Billing.vue'),
 	},
 ];
 

@@ -16,12 +16,21 @@ const api: ElectronApi = {
 	dialog,
 	readFile: fs.readFile.bind(fs),
 	writeFile: fs.writeFile.bind(fs),
+	mkdirp: fs.mkdirp.bind(fs),
+	move: fs.move.bind(fs),
+	copy: fs.copy.bind(fs),
 	path,
 	ipcRenderer,
 	on: ipcRenderer.on.bind(ipcRenderer),
 	addListener: ipcRenderer.addListener.bind(ipcRenderer),
 	bufferFrom: Buffer.from.bind(Buffer),
 	exists,
+	getDir: () => {
+		return store.get('dir', '');
+	},
+	pickDir: async () => {
+		await ipcRenderer.invoke('pick-dir');
+	},
 	resolveFile: ({ report, file, reportName }) => {
 		const dir = store.get('dir');
 		const parts = [dir, report];
@@ -29,7 +38,6 @@ const api: ElectronApi = {
 		if (file) parts.push(file);
 		return path.resolve(...parts);
 	},
-	mkdirp: fs.mkdirp.bind(fs),
 	openFolder: async (folderPath) => {
 		shell.openPath(folderPath);
 	},

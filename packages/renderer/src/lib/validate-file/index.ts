@@ -1,4 +1,5 @@
 import PayrollOptions from './PayrollOptions';
+import PayrollSummary from './PayrollSummary';
 import PNCDepositActivity from './PNCDepositActivity';
 import TNBillingStatement from './TNBillingStatement';
 import TSheetsHoursReport from './TSheetsHoursReport';
@@ -32,6 +33,13 @@ export function validateFile(
 		case 'PNCDepositActivity': {
 			try {
 				return PNCDepositActivity.validate(data);
+			} catch (e) {
+				return false;
+			}
+		}
+		case 'PayrollSummary': {
+			try {
+				return PayrollSummary.validate(data);
 			} catch (e) {
 				return false;
 			}

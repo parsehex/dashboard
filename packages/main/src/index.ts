@@ -1,13 +1,13 @@
 import { app, BrowserWindow, ipcMain, dialog } from 'electron';
-import { join, resolve } from 'path';
+import { join } from 'path';
 import { URL } from 'url';
-// import Chalk from 'chalk';
 import { store } from './store';
 import { setupWindowEvents } from './window-events';
-// import * as fs from 'fs-extra';
+import logger from 'electron-log';
 import state from './state';
 import { writeFile } from 'fs-extra';
 import { fetchFiles, setupDir } from './dir';
+import { installExtensions } from './extensions';
 require('@electron/remote/main').initialize();
 
 const isSingleInstance = app.requestSingleInstanceLock();
@@ -17,15 +17,15 @@ if (!isSingleInstance) {
 	process.exit(0);
 }
 
-const dataDir = resolve(process.cwd(), '../Data');
-store.set('dir', dataDir);
-
 const env = import.meta.env;
 
 export const FileFilters: { [ext: string]: Electron.FileFilter } = {
 	png: { name: 'PNG files', extensions: ['png'] },
 	xlsx: { name: 'XLSX files', extensions: ['xlsx'] },
+	csv: { name: 'CSV files', extensions: ['csv'] },
 };
+
+ipcMain.handle('get-all-files', async () => await fetchFiles());
 ipcMain.handle('save-as', async (event, { fileName, d }: any) => {
 	const ext = fileName.split('.').slice(-1).join();
 	const fileFilter = FileFilters[ext];
@@ -38,7 +38,17 @@ ipcMain.handle('save-as', async (event, { fileName, d }: any) => {
 	await writeFile(file, d);
 });
 
-ipcMain.handle('get-files', async () => await fetchFiles());
+ipcMain.handle('get-dir', () => store.get('dir'));
+ipcMain.handle('pick-dir', async () => {
+	const f = await dialog.showOpenDialog(state.mainWindow as BrowserWindow, {
+		properties: ['openDirectory'],
+	});
+	if (f.canceled || f.filePaths.length === 0) return;
+	const d = f.filePaths[0];
+	store.set('dir', d);
+	await setupDir();
+	state.mainWindow?.webContents.send('dir', d);
+});
 
 const createWindow = async () => {
 	const winSettings = store.get('window');
@@ -97,10 +107,10 @@ app.on('ready', async () => {
 	// const appName = app.getName();
 	// const getAppPath = join(app.getPath('appData'), appName);
 	// await unlink(getAppPath);
-	if (env.MODE !== 'production') {
-		require('vue-devtools').install();
-	}
-	// if (env.MODE === 'development') await installExtensions();
+	// if (env.MODE !== 'production') {
+	// 	require('vue-devtools').install();
+	// }
+	if (env.MODE === 'development') await installExtensions();
 
 	try {
 		await createWindow();
@@ -108,20 +118,20 @@ app.on('ready', async () => {
 		console.error('Failed to create window:', e);
 	}
 
-	// if (env.PROD) await tryUpdate();
+	if (env.PROD) await tryUpdate();
 });
 
-// async function tryUpdate() {
-// 	const { autoUpdater } = await import('electron-updater');
-// 	autoUpdater.logger = logger;
+async function tryUpdate() {
+	const { autoUpdater } = await import('electron-updater');
+	autoUpdater.logger = logger;
 
-// 	console.log(`Dashboard v${autoUpdater.currentVersion.version}`);
-// 	try {
-// 		await autoUpdater.checkForUpdatesAndNotify();
-// 	} catch (e) {
-// 		console.error('Failed update check:', e);
-// 	}
-// }
+	console.log(`Dashboard v${autoUpdater.currentVersion.version}`);
+	try {
+		await autoUpdater.checkForUpdatesAndNotify();
+	} catch (e) {
+		console.error('Failed update check:', e);
+	}
+}
 
 (async () => {
 	await setupDir();

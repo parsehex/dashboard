@@ -1,32 +1,52 @@
 <template>
 	<div class="content report">
-		<div class="choose-report">
+		<div v-if="!isOnlyCommon" class="choose-report">
 			<div :class="['select', reports.length > 0 ? '' : 'hidden']">
-				<label for="reports">Open Report</label>
+				<label for="reports">Report:</label>
 				<select id="reports" v-model="selectedReport">
-					<option v-for="o in reports" :key="o">{{ o }}</option>
+					<option v-for="o in reports" :key="id(o)">{{ o }}</option>
 				</select>
-				<btn type="primary" size="sm" @click="openReportFolder">
-					Open folder
+				<btn
+					class="mx-2"
+					type="info"
+					size="sm"
+					title="Open this report folder in a new window"
+					@click="openReportFolder()"
+				>
+					<icon type="folder" />
 				</btn>
 			</div>
 			<div class="create-report">
 				<input v-model="reportNameInput" type="text" />
-				<btn type="success" @click="create">Create Report</btn>
+				<btn class="mx-1" type="success" @click="create">Create Report</btn>
 			</div>
 		</div>
-		<div v-if="selectedReport" class="files">
+		<div v-if="optionDefs" class="opts">
+			<div v-for="o in optionDefs" :key="id(o.key)">
+				<label :for="id(o.key)">{{ o.label }}</label>
+				<input :id="id(o.key)" v-model="opts[o.key]" :type="o.type" />
+			</div>
+		</div>
+		<div v-if="selectedReport || isOnlyCommon" class="files">
+			<btn
+				v-if="isOnlyCommon"
+				type="primary"
+				size="sm"
+				@click="openReportFolder()"
+			>
+				Open Folder
+			</btn>
 			<choose-file
 				v-for="f in requiredFiles"
-				:key="reportType + '-' + f.key"
+				:key="id(f.key)"
 				:report="reportType"
 				:report-name="selectedReport"
 				:file-type="f.type"
-				:common-file="f.common"
+				:common-file="f.common || isOnlyCommon"
 				@pick-file="files[f.key] = $event"
 			/>
 		</div>
-		<div v-if="selectedReport && loaded" class="container-fluid">
+		<div v-if="shouldShowReport" class="container-fluid">
 			<tabs :tab-list="tabList">
 				<div
 					id="spreadsheet"
@@ -61,7 +81,7 @@ import Spreadsheet from '@/components/Spreadsheet.vue';
 import ChooseFile from '@/components/ChooseFile.vue';
 import Chart from '@/components/Chart.vue';
 import Tabs from '@/components/common/Tabs.vue';
-import { clone, now, pad } from '@/lib/utils';
+import { clone, now, pad, strToId } from '@/lib/utils';
 import { BlankBuffer } from '@/lib/const';
 import state from '@/state';
 import { useElectron } from '@/lib/use-electron';
@@ -84,12 +104,10 @@ export default defineComponent({
 			required: true,
 		},
 		processor: {
-			type: Function as PropType<(files: FilesObj) => Promise<GenericObject>>,
+			type: Function as PropType<
+				(files: FilesObj, options?: GenericObject) => Promise<GenericObject>
+			>,
 			required: true,
-		},
-		chartPresets: {
-			type: Object as PropType<ChartPresets>,
-			default: undefined,
 		},
 		defaultReport: {
 			type: Object as PropType<GenericObject>,
@@ -98,6 +116,14 @@ export default defineComponent({
 		columnDefs: {
 			type: Object as PropType<TabulatorSpreadsheetColumnDefs>,
 			required: true,
+		},
+		chartPresets: {
+			type: Object as PropType<ChartPresets>,
+			default: undefined,
+		},
+		optionDefs: {
+			type: Array as PropType<ReportOptions>,
+			default: undefined,
 		},
 	},
 	data: (props) => {
@@ -111,6 +137,15 @@ export default defineComponent({
 			files[k] = BlankBuffer;
 		}
 
+		const DefaultOptions = Object.fromEntries(
+			(props.optionDefs || []).map((v) => [v.key, ''])
+		);
+
+		const lsKeyOptions = props.reportType + '-options';
+		const lsOptions = localStorage.getItem(lsKeyOptions);
+		let options: any;
+		if (lsOptions) options = JSON.parse(lsOptions);
+
 		return {
 			files,
 			lsKey,
@@ -119,9 +154,23 @@ export default defineComponent({
 			loaded: false,
 			report,
 			sheet: sheets[0],
+			...(props.optionDefs && {
+				opts: options || DefaultOptions,
+			}),
 		};
 	},
 	computed: {
+		isOnlyCommon() {
+			if (this.requiredFiles.length === 1) return true;
+
+			for (const f of this.requiredFiles) {
+				if (!f.common) return false;
+			}
+			return true;
+		},
+		shouldShowReport(): boolean {
+			return (!!this.selectedReport || this.isOnlyCommon) && this.loaded;
+		},
 		sheetTitle(): string {
 			const n = now();
 			const y = n.getFullYear();
@@ -158,14 +207,29 @@ export default defineComponent({
 			},
 			deep: true,
 		},
+		opts: {
+			handler() {
+				const lsKey = this.reportType + '-options';
+				const s = JSON.stringify(this.opts);
+				localStorage.setItem(lsKey, s);
+				this.go();
+			},
+			deep: true,
+		},
 		selectedReport() {
 			localStorage.setItem(this.lsKey, this.selectedReport);
 			this.loaded = false;
 		},
 	},
+	mounted() {
+		const lsVal = localStorage.getItem(this.lsKey);
+		if (lsVal === null && this.reports.length > 0) {
+			this.selectedReport = this.reports[this.reports.length - 1];
+		}
+	},
 	methods: {
 		async go() {
-			this.report = await this.processor(this.files);
+			this.report = await this.processor(this.files, this.opts);
 			this.sheet = Object.keys(this.report)[0];
 			this.loaded = true;
 		},
@@ -179,42 +243,52 @@ export default defineComponent({
 			this.openReportFolder(p);
 		},
 		async openReportFolder(p = '') {
-			if (!p)
+			if (!p) {
+				const reportName = this.isOnlyCommon ? undefined : this.selectedReport;
 				p = resolveFile({
 					report: this.reportType,
-					reportName: this.selectedReport,
+					reportName,
 				});
+			}
 			await openFolder(p);
+		},
+		id(...parts: string[]) {
+			return [strToId(this.reportType)].concat(parts).join('-');
 		},
 	},
 });
 </script>
 
 <style lang="scss">
-.choose-report {
-	display: flex;
-	justify-content: space-around;
+.report {
+	.choose-report {
+		display: flex;
+		justify-content: space-around;
 
-	.select {
-		select {
-			padding: 2px;
-			margin-left: 5px;
+		.select {
+			select {
+				padding: 2px;
+				margin-left: 5px;
+			}
 		}
-		&.hidden {
-			visibility: hidden;
+		.create-report {
+			margin-left: 5em;
 		}
 	}
-	.create-report {
-		margin-left: 5em;
+	.opts {
+		display: flex;
+		flex-direction: row;
+		justify-content: center;
+		column-gap: 2em;
 	}
-}
-.files {
-	display: flex;
-	flex-direction: row;
-	justify-content: center;
+	.files {
+		display: flex;
+		flex-direction: row;
+		justify-content: center;
 
-	* {
-		margin: 0 0.3em;
+		* {
+			margin: 0 0.3em;
+		}
 	}
 }
 </style>

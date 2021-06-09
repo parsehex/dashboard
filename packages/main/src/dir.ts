@@ -5,11 +5,14 @@ import chokidar from 'chokidar';
 import state from './state';
 import { exists } from './fs';
 
-const Reports = ['Weekly Payroll', 'Weekly Transfers'];
+const Reports = ['Weekly Payroll', 'Weekly Transfers', 'Revenue Per Session'];
 
 export async function setupDir() {
 	const dir = store.get('dir');
-	if (!dir) throw new Error('No directory set');
+	if (!dir) {
+		console.log('No directory set');
+		return;
+	}
 
 	for (const k of Reports) {
 		const p = resolve(dir, k);
@@ -27,6 +30,7 @@ export async function fetchFiles() {
 	const reports: FilesList = {
 		'Weekly Payroll': { files: [] },
 		'Weekly Transfers': { files: [] },
+		'Revenue Per Session': { files: [] },
 	};
 	for (const reportType of Reports) {
 		const reportTypeDir = join(dir, reportType);
