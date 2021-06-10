@@ -34,9 +34,9 @@ interface TreeBranch {
 	text: string;
 	id?: string;
 	href?: string;
-	children?: TreeView;
+	children?: ITreeView;
 }
-type TreeView = TreeBranch[];
+type ITreeView = TreeBranch[];
 
 interface SpreadsheetData {
 	[sheetName: string]: {

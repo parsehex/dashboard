@@ -52,7 +52,7 @@ import state from '@/state';
 import { defineComponent } from 'vue';
 import TreeView from './common/TreeView.vue';
 
-const tree: TreeView = [
+const tree: ITreeView = [
 	{
 		text: 'Reports',
 		id: 'report',

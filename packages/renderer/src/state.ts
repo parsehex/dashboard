@@ -45,4 +45,9 @@ export default state;
 		state.isUpdateAvailable = true;
 	});
 	state.version = await ipcRenderer.invoke('get-version');
+
+	// this doesn't need to be here
+	on('help', () => {
+		window.open('/help/index.html', '_blank');
+	});
 })();

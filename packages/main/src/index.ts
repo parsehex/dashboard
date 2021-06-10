@@ -1,14 +1,15 @@
-import { app, BrowserWindow, ipcMain, dialog, Menu } from 'electron';
+import { app, BrowserWindow, ipcMain, dialog } from 'electron';
 import { join } from 'path';
 import { URL } from 'url';
 import { store } from './store';
 import { setupWindowEvents } from './window-events';
-import logger from 'electron-log';
 import state from './state';
 import { writeFile } from 'fs-extra';
 import { fetchFiles, setupDir } from './dir';
 import { installExtensions } from './extensions';
 import { send } from './ipc';
+import './menu';
+import { tryUpdate } from './update';
 require('@electron/remote/main').initialize();
 
 const isSingleInstance = app.requestSingleInstanceLock();
@@ -56,18 +57,6 @@ ipcMain.handle('pick-dir', async () => {
 	send('dir', d);
 });
 
-const menu = Menu.buildFromTemplate([
-	{
-		label: 'File',
-		submenu: [{ role: 'quit' }],
-	},
-	{
-		label: 'Help',
-		submenu: [{ role: 'reload' }, { role: 'toggleDevTools' }],
-	},
-]);
-Menu.setApplicationMenu(menu);
-
 const createWindow = async () => {
 	const winSettings = store.get('window');
 
@@ -110,6 +99,7 @@ const createWindow = async () => {
 };
 
 app.on('second-instance', () => {
+	console.log('second-instance');
 	if (state.mainWindow) {
 		if (state.mainWindow.isMinimized()) state.mainWindow.restore();
 		state.mainWindow.focus();
@@ -119,6 +109,16 @@ app.on('window-all-closed', () => {
 	if (process.platform !== 'darwin') {
 		app.quit();
 	}
+});
+
+app.on('browser-window-created', (e, win) => {
+	// this should keep all open windows from being GCed
+	state.windows.push(win);
+	win.on('close', () => {
+		const i = state.windows.indexOf(win);
+		state.windows.splice(i, 1);
+		win.destroy();
+	});
 });
 
 app.on('ready', async () => {
@@ -132,19 +132,6 @@ app.on('ready', async () => {
 
 	if (env.PROD) await tryUpdate();
 });
-
-async function tryUpdate() {
-	const { autoUpdater } = await import('electron-updater');
-	autoUpdater.logger = logger;
-	(autoUpdater.logger as any).transports.file.level = 'info';
-
-	console.log(`Dashboard v${autoUpdater.currentVersion.version}`);
-	try {
-		await autoUpdater.checkForUpdatesAndNotify();
-	} catch (e) {
-		console.error('Failed update check:', e);
-	}
-}
 
 (async () => {
 	await setupDir();

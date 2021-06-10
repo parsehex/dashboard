@@ -1,20 +1,11 @@
 <template>
-	<svg
-		class="m-1"
-		:width="size"
-		:height="size"
-		fill="none"
-		stroke="currentColor"
-		stroke-width="2"
-		stroke-linecap="round"
-		stroke-linejoin="round"
-	>
-		<use :xlink:href="'../assets/feather-sprite.svg#' + type" />
-	</svg>
+	<!-- eslint-disable vue/no-v-html feather-icons is pretty reputable -->
+	<span v-html="icon"></span>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue';
+import { icons } from 'feather-icons';
 
 export default defineComponent({
 	name: 'Icon',
@@ -26,6 +17,15 @@ export default defineComponent({
 		size: {
 			type: Number,
 			default: 16,
+		},
+	},
+	computed: {
+		icon(): string {
+			return icons[this.type].toSvg({
+				class: 'm-1',
+				height: this.size,
+				width: this.size,
+			});
 		},
 	},
 });
