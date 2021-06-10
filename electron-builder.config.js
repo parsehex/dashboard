@@ -19,6 +19,7 @@ const config = {
 		publisherName: 'Thomas Mays',
 		asar: false,
 		verifyUpdateCodeSignature: false,
+		signAndEditExecutable: false,
 	},
 	files: ['packages/**/dist/**'],
 	extraMetadata: {
