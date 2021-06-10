@@ -17,6 +17,7 @@ const config = {
 	win: {
 		target: 'nsis',
 		publisherName: 'Thomas Mays',
+		asar: false,
 	},
 	files: ['packages/**/dist/**'],
 	extraMetadata: {
