@@ -2,8 +2,8 @@ import * as fs from 'fs-extra';
 import { store } from './store';
 import { join, resolve } from 'path';
 import chokidar from 'chokidar';
-import state from './state';
 import { exists } from './fs';
+import { send } from './ipc';
 
 const Reports = ['Weekly Payroll', 'Weekly Transfers', 'Revenue Per Session'];
 
@@ -21,7 +21,7 @@ export async function setupDir() {
 	}
 
 	chokidar.watch(dir).on('all', async () => {
-		state.mainWindow?.webContents.send('files', await fetchFiles());
+		send('files', await fetchFiles());
 	});
 }
 

@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain, dialog } from 'electron';
+import { app, BrowserWindow, ipcMain, dialog, Menu } from 'electron';
 import { join } from 'path';
 import { URL } from 'url';
 import { store } from './store';
@@ -55,6 +55,18 @@ ipcMain.handle('pick-dir', async () => {
 	await setupDir();
 	send('dir', d);
 });
+
+const menu = Menu.buildFromTemplate([
+	{
+		label: 'File',
+		submenu: [{ role: 'quit' }],
+	},
+	{
+		label: 'Help',
+		submenu: [{ role: 'reload' }, { role: 'toggleDevTools' }],
+	},
+]);
+Menu.setApplicationMenu(menu);
 
 const createWindow = async () => {
 	const winSettings = store.get('window');
