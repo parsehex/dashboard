@@ -18,6 +18,7 @@ const config = {
 		target: 'nsis',
 		publisherName: 'Thomas Mays',
 		asar: false,
+		verifyUpdateCodeSignature: false,
 	},
 	files: ['packages/**/dist/**'],
 	extraMetadata: {
