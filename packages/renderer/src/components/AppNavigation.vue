@@ -19,17 +19,29 @@
 				type="text"
 				class="form-control"
 				placeholder="Data folder"
-				aria-label="Recipient's username"
-				aria-describedby="basic-addon2"
 				disabled
 			/>
 			<div class="input-group-append">
-				<span id="basic-addon2" class="input-group-text">
+				<span class="input-group-text">
 					<btn :type="dir ? 'info' : 'primary'" size="sm" @click="pickDir">
 						<icon type="folder-plus" />
 					</btn>
 				</span>
 			</div>
+		</div>
+		<div class="version-update m-3">
+			<span class="version mx-1">v{{ version }}</span>
+			<!-- <btn class="mx-1" type="info" size="sm" @click="pickDir">
+				<icon type="refresh-cw" />
+			</btn>
+			<btn
+				v-if="isUpdateAvailable"
+				class="mx-1"
+				type="success"
+				@click="pickDir"
+			>
+				Update now
+			</btn> -->
 		</div>
 	</container>
 </template>
@@ -72,6 +84,8 @@ export default defineComponent({
 	computed: {
 		pdfCharts: () => state.chartsToExport,
 		dir: () => state.dir,
+		version: () => state.version,
+		isUpdateAvailable: () => state.isUpdateAvailable,
 	},
 	methods: {
 		reload: () => {
@@ -79,6 +93,13 @@ export default defineComponent({
 		},
 		pickDir: async () => {
 			await useElectron().pickDir();
+		},
+		update: async () => {
+			await useElectron().ipcRenderer.invoke('update');
+		},
+
+		checkUpdate: async () => {
+			await useElectron().ipcRenderer.invoke('check-update');
 		},
 	},
 });

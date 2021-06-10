@@ -8,6 +8,7 @@ import state from './state';
 import { writeFile } from 'fs-extra';
 import { fetchFiles, setupDir } from './dir';
 import { installExtensions } from './extensions';
+import { send } from './ipc';
 require('@electron/remote/main').initialize();
 
 const isSingleInstance = app.requestSingleInstanceLock();
@@ -24,6 +25,11 @@ export const FileFilters: { [ext: string]: Electron.FileFilter } = {
 	xlsx: { name: 'XLSX files', extensions: ['xlsx'] },
 	csv: { name: 'CSV files', extensions: ['csv'] },
 };
+
+ipcMain.handle('get-version', async () => {
+	const { autoUpdater } = await import('electron-updater');
+	return autoUpdater.currentVersion.version;
+});
 
 ipcMain.handle('get-all-files', async () => await fetchFiles());
 ipcMain.handle('save-as', async (event, { fileName, d }: any) => {
@@ -47,7 +53,7 @@ ipcMain.handle('pick-dir', async () => {
 	const d = f.filePaths[0];
 	store.set('dir', d);
 	await setupDir();
-	state.mainWindow?.webContents.send('dir', d);
+	send('dir', d);
 });
 
 const createWindow = async () => {
@@ -104,12 +110,6 @@ app.on('window-all-closed', () => {
 });
 
 app.on('ready', async () => {
-	// const appName = app.getName();
-	// const getAppPath = join(app.getPath('appData'), appName);
-	// await unlink(getAppPath);
-	// if (env.MODE !== 'production') {
-	// 	require('vue-devtools').install();
-	// }
 	if (env.MODE === 'development') await installExtensions();
 
 	try {
@@ -124,6 +124,7 @@ app.on('ready', async () => {
 async function tryUpdate() {
 	const { autoUpdater } = await import('electron-updater');
 	autoUpdater.logger = logger;
+	(autoUpdater.logger as any).transports.file.level = 'info';
 
 	console.log(`Dashboard v${autoUpdater.currentVersion.version}`);
 	try {

@@ -8,6 +8,8 @@ interface State {
 	chartsToExport: any[]; //chart config array
 	dataFiles: FilesList;
 	dir: string;
+	version: string;
+	isUpdateAvailable: boolean;
 }
 
 const state: State = reactive({
@@ -15,8 +17,11 @@ const state: State = reactive({
 	dataFiles: {
 		'Weekly Payroll': { files: [] },
 		'Weekly Transfers': { files: [] },
+		'Revenue Per Session': { files: [] },
 	},
 	dir: '',
+	version: '',
+	isUpdateAvailable: false,
 });
 
 export default state;
@@ -28,10 +33,16 @@ export default state;
 		log('fs change', files);
 		Object.assign(state, { dataFiles: files });
 	});
+	const files = await ipcRenderer.invoke('get-all-files');
+	Object.assign(state, { dataFiles: files });
+
 	on('dir', (e, d: string) => {
 		state.dir = d;
 	});
-	const files = await ipcRenderer.invoke('get-all-files');
-	Object.assign(state, { dataFiles: files });
 	state.dir = await ipcRenderer.invoke('get-dir');
+
+	on('update-available', () => {
+		state.isUpdateAvailable = true;
+	});
+	state.version = await ipcRenderer.invoke('get-version');
 })();
