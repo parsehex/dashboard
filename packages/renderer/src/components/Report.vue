@@ -10,15 +10,19 @@
 					class="mx-2"
 					type="info"
 					size="sm"
-					title="Open this report folder in a new window"
+					title="Open this report folder"
 					@click="openReportFolder()"
 				>
 					<icon type="folder" />
 				</btn>
 			</div>
 			<div class="create-report">
-				<input v-model="reportNameInput" type="text" />
-				<btn class="mx-1" type="success" @click="create">Create Report</btn>
+				<input
+					v-model="reportNameInput"
+					type="text"
+					placeholder="Report name"
+				/>
+				<btn class="mx-1" type="success" @click="create">New Report</btn>
 			</div>
 		</div>
 		<div v-if="optionDefs" class="opts">
@@ -234,6 +238,8 @@ export default defineComponent({
 			this.loaded = true;
 		},
 		async create() {
+			if (!this.reportNameInput) return;
+
 			const p = resolveFile({
 				report: this.reportType,
 				reportName: this.reportNameInput,
