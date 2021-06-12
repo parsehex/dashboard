@@ -5,9 +5,7 @@
 			<btn type="warning" size="sm" @click="reload">
 				<icon type="refresh-cw" />
 			</btn>
-			<a href="/help/index.html" class="btn btn-info btn-sm" target="_blank">
-				Help
-			</a>
+			<!-- <help-link class="btn btn-info btn-sm"> Help </help-link> -->
 			<btn v-if="pdfCharts.length > 0" type="success">
 				Save {{ pdfCharts.length }} Chart{{ pdfCharts.length > 1 ? 's' : '' }}
 				as PDF

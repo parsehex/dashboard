@@ -1,21 +1,24 @@
 <template>
-	<a :href="link" target="_blank"><slot /></a>
+	<btn type="info" @click="onclick"><slot /></btn>
 </template>
 
 <script lang="ts">
+import { useElectron } from '@/lib/use-electron';
 import { defineComponent } from 'vue';
+
+const { ipcRenderer } = useElectron();
 
 export default defineComponent({
 	name: 'HelpLink',
 	props: {
 		page: {
 			type: String,
-			required: true,
+			default: '',
 		},
 	},
-	computed: {
-		link(): string {
-			return '/help/' + this.page + '.html';
+	methods: {
+		onclick() {
+			ipcRenderer.invoke('help', this.page);
 		},
 	},
 });

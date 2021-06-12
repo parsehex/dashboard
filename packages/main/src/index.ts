@@ -57,6 +57,14 @@ ipcMain.handle('pick-dir', async () => {
 	send('dir', d);
 });
 
+ipcMain.handle('help', async (e, page?: string) => {
+	const win = new BrowserWindow({
+		show: true,
+	});
+	if (!page) page = 'index.html';
+	await win.loadURL(pageUrl(join('help', page)));
+});
+
 const createWindow = async () => {
 	const winSettings = store.get('window');
 
@@ -74,19 +82,6 @@ const createWindow = async () => {
 	});
 	if (winSettings.maximized) state.mainWindow.maximize();
 
-	/**
-	 * URL for main window.
-	 * Vite dev server for development.
-	 * `file://../renderer/index.html` for production and test
-	 */
-	const pageUrl =
-		env.MODE === 'development'
-			? env.VITE_DEV_SERVER_URL
-			: new URL(
-					'../renderer/dist/index.html',
-					'file://' + __dirname
-			  ).toString();
-
 	if (env.MODE === 'development') {
 		state.mainWindow.webContents.once('dom-ready', () =>
 			state.mainWindow?.webContents.openDevTools()
@@ -95,8 +90,18 @@ const createWindow = async () => {
 
 	setupWindowEvents(state.mainWindow);
 
-	await state.mainWindow.loadURL(pageUrl as string);
+	await state.mainWindow.loadURL(pageUrl());
 };
+
+/**
+ * URL for main window.
+ * Vite dev server for development.
+ * `file://../renderer/index.html` for production and test
+ */
+function pageUrl(p = 'dist/index.html') {
+	if (env.MODE === 'development') return env.VITE_DEV_SERVER_URL;
+	return new URL('../renderer/' + p, 'file://' + __dirname).toString();
+}
 
 app.on('second-instance', () => {
 	console.log('second-instance');

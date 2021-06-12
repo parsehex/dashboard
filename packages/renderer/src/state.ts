@@ -46,8 +46,8 @@ export default state;
 	});
 	state.version = await ipcRenderer.invoke('get-version');
 
-	// this doesn't need to be here
+	// this doesn't need to be here but it's convenient
 	on('help', () => {
-		window.open('/help/index.html', '_blank');
+		ipcRenderer.invoke('help');
 	});
 })();
