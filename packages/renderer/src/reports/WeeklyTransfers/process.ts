@@ -69,7 +69,7 @@ export default async function (
 	});
 	report['Weekly Transfers'].push({
 		Name: 'Benefits',
-		Amount: Benefits,
+		Amount: Benefits + 800,
 	});
 	report['Weekly Transfers'].push({
 		Name: 'Auto Maint Insur',
