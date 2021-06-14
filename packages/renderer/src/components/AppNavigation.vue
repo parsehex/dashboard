@@ -29,17 +29,12 @@
 		</div>
 		<div class="version-update m-3">
 			<span class="version mx-1">v{{ version }}</span>
-			<!-- <btn class="mx-1" type="info" size="sm" @click="pickDir">
+			<btn class="mx-1" type="info" size="sm" @click="pickDir">
 				<icon type="refresh-cw" />
 			</btn>
-			<btn
-				v-if="isUpdateAvailable"
-				class="mx-1"
-				type="success"
-				@click="pickDir"
-			>
+			<btn v-if="isUpdateAvailable" class="mx-1" type="success" @click="update">
 				Update now
-			</btn> -->
+			</btn>
 		</div>
 	</container>
 </template>
