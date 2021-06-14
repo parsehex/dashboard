@@ -26,10 +26,9 @@
 import type { PropType } from 'vue';
 import { computed, defineComponent } from 'vue';
 import Tabulator from 'tabulator-tables';
-import xlsx from 'xlsx';
-import { saveFile } from '@/lib/io';
-import { Columns } from '@/pages/reports/Payroll/process';
+import { saveSheet } from '@/lib/io';
 import { parse } from 'date-fns';
+import { clone } from '@/lib/utils';
 
 Tabulator.prototype.extendModule('sort', 'sorters', {
 	month: (a: string, b: string) => {
@@ -40,7 +39,7 @@ Tabulator.prototype.extendModule('sort', 'sorters', {
 });
 
 interface Cols {
-	[sheetName: string]: typeof Columns.Employees;
+	[sheetName: string]: TabulatorColumnDefinition[];
 }
 export default defineComponent({
 	name: 'Spreadsheet',
@@ -85,20 +84,22 @@ export default defineComponent({
 			this.$emit('update:sheet', sheet);
 		},
 		async download() {
-			const wb = xlsx.utils.book_new();
+			const thisData = clone(this.data);
 
-			const sheetNames = Object.keys(this.data);
-			const reports = Object.values(this.data);
+			const sheetData = [];
+			const sheetNames = Object.keys(thisData);
+			const reports = Object.values(thisData);
+
 			for (let i = 0; i < reports.length; i++) {
-				const r = reports[i];
-
-				const sheet = xlsx.utils.json_to_sheet(r);
-
-				xlsx.utils.book_append_sheet(wb, sheet, sheetNames[i]);
+				const data = [Object.keys(reports[i][0])].concat(
+					reports[i].map((v) => Object.values(v) as string[])
+				);
+				sheetData.push({
+					name: sheetNames[i],
+					data,
+				});
 			}
-
-			const d = xlsx.write(wb, { bookType: 'csv', type: 'string' });
-			await saveFile(d, this.fileName);
+			await saveSheet(sheetData, this.fileName);
 		},
 	},
 });

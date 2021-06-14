@@ -60,6 +60,10 @@ export async function saveFile(d: Buffer, fileName: string) {
 	const { ipcRenderer } = useElectron();
 	await ipcRenderer.invoke('save-as', { fileName, d });
 }
+export async function saveSheet(d: any, fileName: string) {
+	const { ipcRenderer } = useElectron();
+	await ipcRenderer.invoke('save-sheet', { fileName, d });
+}
 
 interface Options<Col> {
 	file: string;
