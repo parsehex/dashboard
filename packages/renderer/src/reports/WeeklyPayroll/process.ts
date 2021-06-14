@@ -1,5 +1,5 @@
 import xlsx from 'xlsx';
-import { areNamesEqual } from '@/lib/utils';
+import { areNamesEqual, sortByLastName } from '@/lib/utils';
 
 export default async function (
 	input: WeeklyPayroll.InputFilesArg
@@ -200,6 +200,8 @@ export default async function (
 		E['Total Gross'] = +E['Total Gross'].toFixed(2);
 		E['IOP Reg Hrs'] = +E['IOP Reg Hrs'].toFixed(2);
 	}
+
+	report.Employees.sort((a, b) => sortByLastName(a.Name, b.Name));
 	console.groupEnd();
 
 	return report;
