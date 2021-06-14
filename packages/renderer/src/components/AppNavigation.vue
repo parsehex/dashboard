@@ -33,7 +33,7 @@
 				<icon type="refresh-cw" />
 			</btn>
 			<btn v-if="isUpdateAvailable" class="mx-1" type="success" @click="update">
-				Update now
+				Update now (restarts automatically)
 			</btn>
 		</div>
 	</container>
