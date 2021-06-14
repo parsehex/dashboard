@@ -180,7 +180,7 @@ export default defineComponent({
 			const y = n.getFullYear();
 			const d = pad(n.getDate(), 2);
 			const m = pad(n.getMonth() + 1, 2);
-			return `${this.reportType} ${m}-${d}-${y}.csv`;
+			return `${this.reportType} ${m}-${d}-${y}.xlsx`;
 		},
 		reports(): string[] {
 			return Object.keys(state.dataFiles[this.reportType]).filter(

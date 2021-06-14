@@ -5,7 +5,7 @@
 			<btn type="warning" size="sm" @click="reload">
 				<icon type="refresh-cw" />
 			</btn>
-			<!-- <help-link class="btn btn-info btn-sm"> Help </help-link> -->
+			<help-link class="btn btn-info btn-sm"> Help </help-link>
 			<btn v-if="pdfCharts.length > 0" type="success">
 				Save {{ pdfCharts.length }} Chart{{ pdfCharts.length > 1 ? 's' : '' }}
 				as PDF
@@ -29,17 +29,12 @@
 		</div>
 		<div class="version-update m-3">
 			<span class="version mx-1">v{{ version }}</span>
-			<!-- <btn class="mx-1" type="info" size="sm" @click="pickDir">
+			<btn class="mx-1" type="info" size="sm" @click="pickDir">
 				<icon type="refresh-cw" />
 			</btn>
-			<btn
-				v-if="isUpdateAvailable"
-				class="mx-1"
-				type="success"
-				@click="pickDir"
-			>
+			<btn v-if="isUpdateAvailable" class="mx-1" type="success" @click="update">
 				Update now
-			</btn> -->
+			</btn>
 		</div>
 	</container>
 </template>

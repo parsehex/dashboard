@@ -17,6 +17,7 @@ declare namespace PayrollOptions {
 		Admin: number;
 		Clin: number;
 		IOP: number;
+		Holiday: number;
 	}
 	export interface SalariedEmployees {
 		Name: string;

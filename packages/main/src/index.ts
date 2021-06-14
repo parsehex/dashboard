@@ -9,6 +9,7 @@ import { fetchFiles, setupDir } from './dir';
 import { installExtensions } from './extensions';
 import { send } from './ipc';
 import './menu';
+import XLSX from 'node-xlsx';
 import { tryUpdate } from './update';
 require('@electron/remote/main').initialize();
 
@@ -43,6 +44,19 @@ ipcMain.handle('save-as', async (event, { fileName, d }: any) => {
 	if (f.canceled || !f.filePath) return;
 	const file = f.filePath;
 	await writeFile(file, d);
+});
+ipcMain.handle('save-sheet', async (event, { fileName, d }: any) => {
+	const ext = fileName.split('.').slice(-1).join();
+	const fileFilter = FileFilters[ext];
+	const f = await dialog.showSaveDialog(state.mainWindow as BrowserWindow, {
+		filters: [fileFilter],
+		defaultPath: fileName,
+	});
+	if (f.canceled || !f.filePath) return;
+	const file = f.filePath;
+
+	const data = XLSX.build(d);
+	await writeFile(file, data);
 });
 
 ipcMain.handle('get-dir', () => store.get('dir'));

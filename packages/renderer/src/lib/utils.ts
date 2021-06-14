@@ -161,3 +161,14 @@ function firstNamesEqual(name1: string, name2: string, threshold = 0.5) {
 	const similarity = stringSimilarity.compareTwoStrings(name1, name2);
 	return similarity >= threshold;
 }
+
+export function sortByLastName(a: string, b: string) {
+	const splitA = a.split(' ');
+	const splitB = b.split(' ');
+	const lastA = splitA[splitA.length - 1];
+	const lastB = splitB[splitB.length - 1];
+
+	if (lastA < lastB) return -1;
+	if (lastA > lastB) return 1;
+	return 0;
+}
