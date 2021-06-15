@@ -1,10 +1,10 @@
 <template>
-	<btn type="info" @click="onclick"><slot /></btn>
+	<btn type="info" :size="size" @click="onclick">{{ label }}</btn>
 </template>
 
 <script lang="ts">
 import { useElectron } from '@/lib/use-electron';
-import { defineComponent } from 'vue';
+import { defineComponent, PropType } from 'vue';
 
 const { ipcRenderer } = useElectron();
 
@@ -13,6 +13,14 @@ export default defineComponent({
 	props: {
 		page: {
 			type: String,
+			default: '/',
+		},
+		label: {
+			type: String,
+			default: '?',
+		},
+		size: {
+			type: String as PropType<'' | 'sm' | 'lg' | 'xs'>,
 			default: '',
 		},
 	},

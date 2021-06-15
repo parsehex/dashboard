@@ -40,6 +40,7 @@ const dictionary: Files = {
 			file: 'Payroll_Summary',
 			key: 'PayrollSummary',
 		},
+		help: 'file-types/PayrollSummary',
 	},
 };
 const keys = Object.keys(dictionary) as SupportedFileType[];
@@ -65,3 +66,9 @@ export function getKeyFromFile(file: string) {
 		if (f.file === file) return f.key;
 	}
 }
+
+export const FileFilters: { [ext: string]: Electron.FileFilter } = {
+	png: { name: 'PNG files', extensions: ['png'] },
+	xlsx: { name: 'XLSX files', extensions: ['xlsx'] },
+	csv: { name: 'CSV files', extensions: ['csv'] },
+};

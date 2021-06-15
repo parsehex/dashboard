@@ -4,12 +4,10 @@
 			<span>{{ fileTypeLabel }}</span>
 			<help-link
 				v-if="helpPage"
-				class="btn btn-link btn-sm btn-info text-white"
 				:page="helpPage"
+				size="sm"
 				title="Learn more about this file"
-			>
-				?
-			</help-link>
+			/>
 		</div>
 		<dropdown :actions="dropdownActions" :btn-label="label" />
 	</div>

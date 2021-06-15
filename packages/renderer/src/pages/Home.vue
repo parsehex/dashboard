@@ -3,7 +3,7 @@
 		<alert v-if="!dir" type="primary">
 			First you must choose a folder to keep data files in.
 			<br />
-			<help-link class="btn btn-info" page="data-dir">Learn More</help-link>
+			<help-link page="data-dir" label="Learn More" />
 			<btn type="primary" @click="pick">Choose folder</btn>
 		</alert>
 		<span v-else>&lt; Open a report in the sidebar</span>
