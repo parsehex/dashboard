@@ -17,7 +17,7 @@ const config = {
 	win: {
 		target: 'nsis',
 		publisherName: 'Thomas Mays',
-		asar: false,
+		// asar: false,
 		verifyUpdateCodeSignature: false,
 		signAndEditExecutable: false,
 	},
