@@ -37,6 +37,7 @@
     "*.{js,ts,vue}": "eslint --cache --fix"
   },
   "devDependencies": {
+    "@11ty/eleventy": "^0.12.1",
     "@types/bootstrap": "^5.0.15",
     "@types/electron-devtools-installer": "^2.2.0",
     "@types/fs-extra": "^9.0.11",

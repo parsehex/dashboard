@@ -15,8 +15,8 @@
 - File Types
   - [Payroll Options](file-types/PayrollOptions.md)
   - [Payroll Summary](file-types/PayrollSummary.md)
-  - [TSheets Hours Report](file-types/TSheetsHoursReport.md)
   - [TherapyNotes Billing Transactions](file-types/TNBillingTransactions.md)
+  - [TSheets Hours Report](file-types/TSheetsHoursReport.md)
 
 ## OneDrive
 
