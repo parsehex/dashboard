@@ -54,6 +54,10 @@ export default defineComponent({
 			type: String,
 			required: true,
 		},
+		downloadTo: {
+			type: String,
+			required: true,
+		},
 	},
 	emits: ['update:sheet'],
 	setup(props) {
@@ -99,7 +103,7 @@ export default defineComponent({
 					data,
 				});
 			}
-			await saveSheet(sheetData, this.fileName);
+			await saveSheet(sheetData, this.fileName, this.downloadTo);
 		},
 	},
 });
