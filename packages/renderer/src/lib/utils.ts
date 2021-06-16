@@ -91,7 +91,7 @@ export function genNAColumns(columnNames: string | string[]) {
 
 	if (typeof columnNames === 'string') columnNames = [columnNames];
 	for (const n of columnNames) {
-		tableData[n] = 'N/A';
+		tableData[n] = '';
 	}
 
 	return tableData;

@@ -40,7 +40,8 @@ declare namespace RPSReport {
 	}
 	interface Patient extends StatsColumns, RPSColumns, OwesColumns {
 		'Patient Name': string;
-		'Next Appointment': string;
+		'Next Appt': string;
+		'Next Appt With': string;
 	}
 	interface PrimaryInsurer extends StatsColumns, RPSColumns {
 		'Primary Insurer': string;

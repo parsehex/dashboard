@@ -25,8 +25,8 @@ const routes = [
 	},
 	{
 		path: '/report/billing-tn',
-		name: 'Billing Report',
-		component: () => import('@/reports/Billing/Billing.vue'),
+		name: 'Revenue Per Session Report',
+		component: () => import('@/reports/RevenuePerSession/Billing.vue'),
 	},
 ];
 

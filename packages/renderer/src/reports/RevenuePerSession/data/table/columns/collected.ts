@@ -6,12 +6,16 @@ import { pastAppts } from '../../filter';
 /** Columns `Total Expected`, `Collect %` */
 export default function collected(appts: Appointment[]) {
 	appts = pastAppts(appts);
-	if (appts.length === 0) {
-		genNAColumns(['Total Expected', 'Collected %']);
-	}
+	if (appts.length === 0)
+		return genNAColumns(['Total Expected', 'Collected %']);
 
-	const paid: number = math.sum(appts.map((appt) => appt.total.paid));
-	const expected: number = math.sum(appts.map((appt) => appt.total.expected));
+	const paid: number = math.sum(appts.map((appt) => appt.total.paid)) || 0;
+	const expected: number =
+		math.sum(appts.map((appt) => appt.total.expected)) || 0;
+
+	if (paid === 0 && expected === 0) {
+		return genNAColumns(['Total Expected', 'Collected %']);
+	}
 
 	let collected = (paid / expected) * 100;
 	if (paid === 0) collected = 0;

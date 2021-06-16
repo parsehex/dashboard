@@ -5,13 +5,14 @@ import { futureAppts } from '../../filter';
 
 export default function nextAppt(appts: Appointment[]) {
 	appts = futureAppts(appts);
-	if (appts.length === 0) return genNAColumns('Next Appointment');
+	if (appts.length === 0) return genNAColumns(['Next Appt', 'Next Appt With']);
 
 	appts.sort((a, b) => a.date.getTime() - b.date.getTime());
 
 	const appt = appts[0];
 
 	return {
-		'Next Appointment': `${format(appt.date, 'Pp')} / ${appt.clinician}`,
+		'Next Appt': format(appt.date, 'Pp'),
+		'Next Appt With': appt.clinician,
 	};
 }
