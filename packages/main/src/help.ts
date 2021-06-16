@@ -9,6 +9,7 @@ export async function openHelp(page = '') {
 		console.warn('help page should be relative, got ' + page);
 		page = page.slice(1);
 	}
+	if (!/\.html$/i.test(page)) page += '.html';
 
 	await createWindow({ key: 'helpWindow', page: helpPageUrl(page) });
 }
@@ -16,10 +17,7 @@ export async function openHelp(page = '') {
 /** `page` should be relative */
 function helpPageUrl(page = '') {
 	if (env.MODE === 'development') {
-		return env.VITE_DEV_SERVER_URL + 'help/' + (page || 'index.html');
+		return env.VITE_DEV_SERVER_URL + 'help/' + page;
 	}
-	return new URL(
-		'../renderer/help/' + (page || 'index.html'),
-		'file://' + __dirname
-	).toString();
+	return new URL('../renderer/help/' + page, 'file://' + __dirname).toString();
 }
