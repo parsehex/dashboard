@@ -79,7 +79,7 @@ export default defineComponent({
 			maxHeight: Math.floor(window.innerHeight) - table.offsetTop - 50, // this enables the Virtual DOM
 			data: this.data[this.sheet],
 			columns: this.columns[this.sheet],
-			layout: 'fitColumns',
+			responsiveLayout: true,
 			autoResize: true,
 		});
 	},
