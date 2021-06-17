@@ -10,9 +10,7 @@ Go to [this](https://github.com/parsehex/dashboard2/releases/latest) page. Click
 
 Open the file once it's done downloading.
 
-#### Step 2a
-
-If a window like the below comes up, click "More info" (1) and then "Run Anyway" (2):
+If a window like the one below comes up, click "More info" (1) and then "Run Anyway" (2):
 
 **Only do this when installing Dashboard, unless you know what you're doing!**
 
