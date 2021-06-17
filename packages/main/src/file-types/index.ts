@@ -1,13 +1,12 @@
 const dictionary: Files = {
-	// @ts-ignore: i have no clue what the type checker is talking about
 	TNBillingStatement: {
 		name: {
-			print: 'TherapyNotes Billing Statement',
+			print: 'TherapyNotes Billing Transactions',
 			file: 'TN_Billing_Statement',
 			key: 'TNBillingStatement',
 		},
+		help: 'file-types/TNBillingTransactions',
 	},
-	// @ts-ignore: i have no clue what the type checker is talking about
 	TSheetsHoursReport: {
 		name: {
 			print: 'TSheets Hours Report',
@@ -16,7 +15,6 @@ const dictionary: Files = {
 		},
 		help: 'file-types/TSheetsHoursReport',
 	},
-	// @ts-ignore: i have no clue what the type checker is talking about
 	PayrollOptions: {
 		name: {
 			print: 'Payroll Options',
@@ -25,7 +23,6 @@ const dictionary: Files = {
 		},
 		help: 'file-types/PayrollOptions',
 	},
-	// @ts-ignore: i have no clue what the type checker is talking about
 	PNCDepositActivity: {
 		name: {
 			print: 'PNC Deposit Activity',
@@ -33,13 +30,13 @@ const dictionary: Files = {
 			key: 'PNCDepositActivity',
 		},
 	},
-	// @ts-ignore: i have no clue what the type checker is talking about
 	PayrollSummary: {
 		name: {
 			print: 'Payroll Summary',
 			file: 'Payroll_Summary',
 			key: 'PayrollSummary',
 		},
+		help: 'file-types/PayrollSummary',
 	},
 };
 const keys = Object.keys(dictionary) as SupportedFileType[];
@@ -65,3 +62,9 @@ export function getKeyFromFile(file: string) {
 		if (f.file === file) return f.key;
 	}
 }
+
+export const FileFilters: { [ext: string]: Electron.FileFilter } = {
+	png: { name: 'PNG files', extensions: ['png'] },
+	xlsx: { name: 'XLSX files', extensions: ['xlsx'] },
+	csv: { name: 'CSV files', extensions: ['csv'] },
+};

@@ -61,7 +61,8 @@ export const Columns: TabulatorSpreadsheetColumnDefs = {
 		...StatsColumnsDef(),
 		...RPSColumnsDef(),
 		...OwesColumnsDef(),
-		colDef('Next Appointment'),
+		colDef('Next Appt'),
+		colDef('Next Appt With'),
 	],
 	'Primary Insurer': [
 		colDef(getPrimaryColumnName('Primary Insurer')),

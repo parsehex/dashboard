@@ -1,6 +1,6 @@
 {
   "name": "dashboard",
-  "version": "0.5.2",
+  "version": "0.5.3",
   "author": "Thomas Mays",
   "private": true,
   "engines": {
@@ -11,9 +11,10 @@
   "scripts": {
     "md": "generate-md --layout github --input ./help-docs --output ./packages/renderer/help",
     "buildEnvTypes": "node scripts/buildEnvTypes.js",
-    "build": "node scripts/build.js",
+    "build": "npm run md && node scripts/build.js",
     "precompile": "cross-env MODE=production npm run build",
     "compile": "electron-builder build --config electron-builder.config.js --dir",
+    "comp": "electron-builder build --config electron-builder.config.js --dir",
     "pretest": "cross-env MODE=test npm run build",
     "test": "node tests/app.spec.js",
     "watch": "node scripts/watch.js",
@@ -37,6 +38,7 @@
     "*.{js,ts,vue}": "eslint --cache --fix"
   },
   "devDependencies": {
+    "@11ty/eleventy": "^0.12.1",
     "@types/bootstrap": "^5.0.15",
     "@types/electron-devtools-installer": "^2.2.0",
     "@types/fs-extra": "^9.0.11",

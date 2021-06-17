@@ -5,7 +5,7 @@
 			<btn type="warning" size="sm" @click="reload">
 				<icon type="refresh-cw" />
 			</btn>
-			<help-link class="btn btn-info btn-sm"> Help </help-link>
+			<help-link size="sm" label="Help" />
 			<btn v-if="pdfCharts.length > 0" type="success">
 				Save {{ pdfCharts.length }} Chart{{ pdfCharts.length > 1 ? 's' : '' }}
 				as PDF
@@ -33,7 +33,7 @@
 				<icon type="refresh-cw" />
 			</btn>
 			<btn v-if="isUpdateAvailable" class="mx-1" type="success" @click="update">
-				Update now
+				Update now (restarts automatically)
 			</btn>
 		</div>
 	</container>

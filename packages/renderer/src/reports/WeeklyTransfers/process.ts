@@ -92,6 +92,10 @@ export default async function (
 		Name: 'Bus Savings (2%)',
 		Amount: DepositsTotal * 0.02,
 	});
+	report['Weekly Transfers'].push({
+		Name: 'InSync pay-off (7.5%)',
+		Amount: DepositsTotal * 0.075,
+	});
 
 	console.groupEnd();
 

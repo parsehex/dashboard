@@ -17,12 +17,7 @@
 				</btn>
 			</div>
 			<div class="create-report">
-				<input
-					v-model="reportNameInput"
-					type="text"
-					placeholder="Report name"
-				/>
-				<btn class="mx-1" type="success" @click="create">New Report</btn>
+				<btn class="mx-1" type="success" @click="create">Create New Report</btn>
 			</div>
 		</div>
 		<div v-if="optionDefs" class="opts">
@@ -63,6 +58,7 @@
 						:data="report"
 						:file-name="sheetTitle"
 						:columns="columnDefs"
+						:download-to="reportFolder"
 					/>
 				</div>
 				<div
@@ -89,6 +85,7 @@ import { clone, now, pad, strToId } from '@/lib/utils';
 import { BlankBuffer } from '@/lib/const';
 import state from '@/state';
 import { useElectron } from '@/lib/use-electron';
+import format from 'date-fns/format';
 const { mkdirp, resolveFile, openFolder } = useElectron();
 
 interface FilesObj {
@@ -154,7 +151,6 @@ export default defineComponent({
 			files,
 			lsKey,
 			selectedReport: localStorage.getItem(lsKey) || '',
-			reportNameInput: '',
 			loaded: false,
 			report,
 			sheet: sheets[0],
@@ -194,6 +190,13 @@ export default defineComponent({
 		},
 		depKeys(): string[] {
 			return this.requiredFiles.map((v) => v.key);
+		},
+		reportFolder(): string {
+			const reportName = this.isOnlyCommon ? undefined : this.selectedReport;
+			return resolveFile({
+				report: this.reportType,
+				reportName,
+			});
 		},
 	},
 	watch: {
@@ -238,26 +241,23 @@ export default defineComponent({
 			this.loaded = true;
 		},
 		async create() {
-			if (!this.reportNameInput) return;
-
+			const name = format(new Date(), 'yy-MM-dd');
+			if (this.reports.includes(name)) {
+				this.selectedReport = name;
+				return;
+			}
 			const p = resolveFile({
 				report: this.reportType,
-				reportName: this.reportNameInput,
+				reportName: name,
 			});
 			await mkdirp(p);
-			this.selectedReport = this.reportNameInput;
+			this.selectedReport = name;
 			this.openReportFolder(p);
 		},
 		async openReportFolder(p = '') {
-			if (!p) {
-				const reportName = this.isOnlyCommon ? undefined : this.selectedReport;
-				p = resolveFile({
-					report: this.reportType,
-					reportName,
-				});
-			}
-			await openFolder(p);
+			await openFolder(p || this.reportFolder);
 		},
+
 		id(...parts: string[]) {
 			return [strToId(this.reportType)].concat(parts).join('-');
 		},

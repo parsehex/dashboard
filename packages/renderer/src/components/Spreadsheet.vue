@@ -54,6 +54,10 @@ export default defineComponent({
 			type: String,
 			required: true,
 		},
+		downloadTo: {
+			type: String,
+			required: true,
+		},
 	},
 	emits: ['update:sheet'],
 	setup(props) {
@@ -75,7 +79,7 @@ export default defineComponent({
 			maxHeight: Math.floor(window.innerHeight) - table.offsetTop - 50, // this enables the Virtual DOM
 			data: this.data[this.sheet],
 			columns: this.columns[this.sheet],
-			layout: 'fitColumns',
+			responsiveLayout: true,
 			autoResize: true,
 		});
 	},
@@ -99,7 +103,7 @@ export default defineComponent({
 					data,
 				});
 			}
-			await saveSheet(sheetData, this.fileName);
+			await saveSheet(sheetData, this.fileName, this.downloadTo);
 		},
 	},
 });

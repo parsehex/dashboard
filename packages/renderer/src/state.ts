@@ -45,9 +45,4 @@ export default state;
 		state.isUpdateAvailable = true;
 	});
 	state.version = await ipcRenderer.invoke('get-version');
-
-	// this doesn't need to be here but it's convenient
-	on('help', () => {
-		ipcRenderer.invoke('help');
-	});
 })();

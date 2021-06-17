@@ -17,11 +17,11 @@ const config = {
 	win: {
 		target: 'nsis',
 		publisherName: 'Thomas Mays',
-		asar: false,
+		// asar: false,
 		verifyUpdateCodeSignature: false,
 		signAndEditExecutable: false,
 	},
-	files: ['packages/**/dist/**'],
+	files: ['packages/**/dist/**', 'packages/renderer/help/**'],
 	extraMetadata: {
 		version: pkg.version,
 	},
