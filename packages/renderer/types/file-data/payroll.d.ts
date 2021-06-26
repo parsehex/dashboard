@@ -21,5 +21,6 @@ declare namespace PayrollOptions {
 	}
 	export interface SalariedEmployees {
 		Name: string;
+		'Weekly Gross': number;
 	}
 }

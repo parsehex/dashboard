@@ -18,6 +18,14 @@ export default defineComponent({
 			type: Number,
 			default: 16,
 		},
+		color: {
+			type: String,
+			default: 'black',
+		},
+		strokeWidth: {
+			type: Number,
+			default: 1.5,
+		},
 	},
 	computed: {
 		icon(): string {
@@ -25,6 +33,8 @@ export default defineComponent({
 				class: 'm-1',
 				height: this.size,
 				width: this.size,
+				color: this.color,
+				'stroke-width': this.strokeWidth,
 			});
 		},
 	},

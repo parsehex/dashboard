@@ -15,6 +15,14 @@ const dictionary: Files = {
 		},
 		help: 'file-types/TSheetsHoursReport',
 	},
+	TSheetsTimesheetReport: {
+		name: {
+			print: 'TSheets Timesheet Report',
+			file: 'TSheets_Timesheet_Report',
+			key: 'TSheetsTimesheetReport',
+		},
+		help: 'file-types/TSheetsTimesheetReport',
+	},
 	PayrollOptions: {
 		name: {
 			print: 'Payroll Options',
@@ -40,7 +48,7 @@ const dictionary: Files = {
 	},
 };
 const keys = Object.keys(dictionary) as SupportedFileType[];
-// @ts-ignore: i have no clue what the type checker is talking about
+
 const fileKeyLookup = keys.map((key) => ({
 	file: dictionary[key].name.file,
 	key,

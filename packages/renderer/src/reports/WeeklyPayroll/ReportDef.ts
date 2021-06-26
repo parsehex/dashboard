@@ -6,15 +6,17 @@ export const ReportName: ReportType = 'Weekly Payroll';
 export const Columns: TabulatorSpreadsheetColumnDefs = {
 	Employees: [
 		colDef('Name'),
+		colDef('IOP Reg Hrs'),
 		colDef('Vaca Hrs'),
+		// colDef('Holiday Rate'),
+		colDef('Holiday Hrs'),
 		colDef('Admin Hrs'),
-		colDef('Admin Rate', { formatter: 'money' }),
+		// colDef('Admin Rate', { formatter: 'money' }),
 		colDef('Admin Gross', { formatter: 'money' }),
 		colDef('Clin Hrs'),
-		colDef('Clin Rate', { formatter: 'money' }),
+		// colDef('Clin Rate', { formatter: 'money' }),
 		colDef('Clin Gross', { formatter: 'money' }),
 		colDef('IOP Rate', { formatter: 'money' }),
-		colDef('IOP Reg Hrs'),
 		colDef('Total Hrs'),
 		colDef('Total Gross', { formatter: 'money' }),
 	],
@@ -59,6 +61,6 @@ export const Processor = process;
 
 export const RequiredFiles: ReportDep[] = [
 	{ type: 'TNBillingStatement', key: 'billing' },
-	{ type: 'TSheetsHoursReport', key: 'hours' },
+	{ type: 'TSheetsTimesheetReport', key: 'hours' },
 	{ type: 'PayrollOptions', key: 'options', common: true },
 ];

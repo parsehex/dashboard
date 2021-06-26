@@ -1,11 +1,16 @@
 import { format } from 'date-fns';
-import { genNAColumns } from '@/lib/utils';
+import { clone } from '@/lib/utils';
 import type { Appointment } from '../../parse';
 import { futureAppts } from '../../filter';
 
+const Blank = {
+	'Next Appt': '',
+	'Next Appt With': '',
+};
+
 export default function nextAppt(appts: Appointment[]) {
 	appts = futureAppts(appts);
-	if (appts.length === 0) return genNAColumns(['Next Appt', 'Next Appt With']);
+	if (appts.length === 0) return clone(Blank);
 
 	appts.sort((a, b) => a.date.getTime() - b.date.getTime());
 

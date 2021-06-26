@@ -24,6 +24,6 @@ export const RequiredFiles: ReportDep[] = [
 ];
 
 export const Options: ReportOptions = [
-	{ type: 'date', key: 'startDate', label: 'Start Date' },
-	{ type: 'date', key: 'endDate', label: 'End Date' },
+	// { type: 'date', key: 'startDate', label: 'Start Date' },
+	// { type: 'date', key: 'endDate', label: 'End Date' },
 ];

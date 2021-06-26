@@ -68,6 +68,20 @@ export async function saveSheet(
 	const { ipcRenderer } = useElectron();
 	await ipcRenderer.invoke('save-sheet', { fileName, d, defaultDirectory });
 }
+export async function saveReport(
+	d: any,
+	fileName: string,
+	reportType: ReportType,
+	defaultDirectory?: string
+) {
+	const { ipcRenderer } = useElectron();
+	await ipcRenderer.invoke('save-report', {
+		fileName,
+		d,
+		defaultDirectory,
+		reportType,
+	});
+}
 
 interface Options<Col> {
 	file: string;

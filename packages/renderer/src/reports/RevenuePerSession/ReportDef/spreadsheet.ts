@@ -35,7 +35,10 @@ export const Columns: TabulatorSpreadsheetColumnDefs = {
 	'% Collected': [
 		colDef(getPrimaryColumnName('% Collected')),
 		colDef('Total Expected', { formatter: 'money' }),
-		colDef('% Collected', { sorter: 'number' }),
+		colDef('% Collected', {
+			sorter: 'number',
+			formatter: 'percent',
+		}),
 		...PaidColumnsDef(),
 	],
 	'Appointment Type': [

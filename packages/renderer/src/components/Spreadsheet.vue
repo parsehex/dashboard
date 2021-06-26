@@ -26,7 +26,7 @@
 import type { PropType } from 'vue';
 import { computed, defineComponent } from 'vue';
 import Tabulator from 'tabulator-tables';
-import { saveSheet } from '@/lib/io';
+import { saveReport } from '@/lib/io';
 import { parse } from 'date-fns';
 import { clone } from '@/lib/utils';
 
@@ -37,6 +37,14 @@ Tabulator.prototype.extendModule('sort', 'sorters', {
 		return aD - bD;
 	},
 });
+Tabulator.prototype.extendModule('format', 'formatters', {
+	percent: (cell, formatterParams?) => {
+		const precision = formatterParams?.precision || 1;
+		const v = cell.getValue();
+		if (v !== 0 && !v) return v;
+		return (+v * 100).toFixed(precision) + '%';
+	},
+});
 
 interface Cols {
 	[sheetName: string]: TabulatorColumnDefinition[];
@@ -45,6 +53,7 @@ export default defineComponent({
 	name: 'Spreadsheet',
 	props: {
 		data: { type: Object as PropType<SpreadsheetData>, required: true },
+		reportType: { type: String as PropType<ReportType>, required: true },
 		columns: { type: Object as PropType<Cols>, required: true },
 		sheet: {
 			type: String as PropType<keyof SpreadsheetData>,
@@ -90,20 +99,13 @@ export default defineComponent({
 		async download() {
 			const thisData = clone(this.data);
 
-			const sheetData = [];
-			const sheetNames = Object.keys(thisData);
-			const reports = Object.values(thisData);
-
-			for (let i = 0; i < reports.length; i++) {
-				const data = [Object.keys(reports[i][0])].concat(
-					reports[i].map((v) => Object.values(v) as string[])
-				);
-				sheetData.push({
-					name: sheetNames[i],
-					data,
-				});
-			}
-			await saveSheet(sheetData, this.fileName, this.downloadTo);
+			console.log(thisData);
+			await saveReport(
+				thisData,
+				this.fileName,
+				this.reportType,
+				this.downloadTo
+			);
 		},
 	},
 });
