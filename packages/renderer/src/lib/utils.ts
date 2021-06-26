@@ -1,5 +1,6 @@
 import numeral from 'numeral';
 import stringSimilarity from 'string-similarity';
+import Holidays from 'date-holidays';
 
 export function generateID() {
 	return '' + Math.random().toString(36).substr(2, 9);
@@ -86,6 +87,26 @@ export function uniqObjectArray<T extends GenericObject>(
 	return uniqArr;
 }
 
+export function genColumns(columnNames: string | string[], value: any) {
+	const tableData: any = {};
+
+	if (typeof columnNames === 'string') columnNames = [columnNames];
+	for (const n of columnNames) {
+		tableData[n] = clone(value);
+	}
+
+	return tableData;
+}
+export function genZeroColumns(columnNames: string | string[]) {
+	const tableData: any = {};
+
+	if (typeof columnNames === 'string') columnNames = [columnNames];
+	for (const n of columnNames) {
+		tableData[n] = 0;
+	}
+
+	return tableData;
+}
 export function genNAColumns(columnNames: string | string[]) {
 	const tableData: any = {};
 
@@ -171,4 +192,26 @@ export function sortByLastName(a: string, b: string) {
 	if (lastA < lastB) return -1;
 	if (lastA > lastB) return 1;
 	return 0;
+}
+
+const HOLIDAYS = [
+	'Memorial Day',
+	'Independence Day',
+	'Labor Day',
+	'Thanksgiving Day',
+	'Christmas Day',
+	// eslint-disable-next-line quotes
+	"New Year's Day",
+];
+
+const hd = new Holidays('US', 'OH');
+export function isHoliday(date: Date) {
+	const h = hd.isHoliday(date);
+	if (!h) return false;
+
+	for (const day of h) {
+		if (HOLIDAYS.includes(day.name)) return true;
+	}
+
+	return false;
 }

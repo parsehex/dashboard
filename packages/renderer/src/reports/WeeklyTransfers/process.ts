@@ -1,15 +1,17 @@
 import xlsx from 'xlsx';
-import { isAfter, isBefore, parse } from 'date-fns';
+import { isAfter, isBefore, parse, sub } from 'date-fns';
 import { newDateFromExcel } from '@/lib/utils';
 
 export default async function (
 	input: WeeklyTransfers.InputFilesArg,
-	{ startDate, endDate }: WeeklyTransfers.InputOptions
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	{ startDate, endDate }: WeeklyTransfers.InputOptions,
+	reportName: string
 ): Promise<WeeklyTransfers.Report> {
 	console.group('process weekly transfers');
 
-	const start = parse(startDate, 'yyyy-MM-dd', new Date());
-	const end = parse(endDate, 'yyyy-MM-dd', new Date());
+	const start = parse(reportName, 'yy-MM-dd', new Date());
+	const end = sub(start, { days: 7 });
 
 	const files: WeeklyTransfers.InputFiles = {
 		deposits: [],

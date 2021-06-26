@@ -1,24 +1,24 @@
-import math from '@/math';
-import { genNAColumns } from '@/lib/utils';
 import type { Appointment } from '../../parse';
 import { pastAppts } from '../../filter';
+import { clone } from '@/lib/utils';
+import { sum } from 'simple-statistics';
+
+const Blank = {
+	'Total Revenue': 0,
+	'Total Sessions': 0,
+};
 
 /** Columns `Total Revenue`, `Total Sessions` */
 export default function rps(appts: Appointment[]) {
 	appts = pastAppts(appts);
-	if (appts.length === 0) {
-		return {
-			...genNAColumns('Total Revenue'),
-			'Total Sessions': 0,
-		};
-	}
+	if (appts.length === 0) return clone(Blank);
 
 	const totals = appts.map((a) => a.total.paid);
-	const sum = math.sum(totals);
+	const total = sum(totals);
 	const sessions = totals.length;
 
 	return {
-		'Total Revenue': sum,
+		'Total Revenue': total,
 		'Total Sessions': sessions,
 	};
 }

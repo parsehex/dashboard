@@ -1,24 +1,28 @@
-import math from '@/math';
-import { genNAColumns } from '@/lib/utils';
+import { clone } from '@/lib/utils';
 import type { Appointment } from '../../parse';
 import { pastAppts } from '../../filter';
+import { sum } from 'simple-statistics';
+
+const Blank = {
+	'Patient Paid': 0,
+	'Insurance Paid': 0,
+	'Paid Total': 0,
+};
 
 /** Columns `Patient Paid`, `Insurance Paid`, `Paid Total` */
 export default function paid(appts: Appointment[]) {
 	appts = pastAppts(appts);
-	if (appts.length === 0) {
-		return genNAColumns(['Patient Paid', 'Insurance Paid', 'Paid Total']);
-	}
+	if (appts.length === 0) return clone(Blank);
 
 	const pPaid = appts.map((appt) => {
 		return appt.patient.balance.paid;
 	});
-	const patientPaidSum: number = math.sum(pPaid);
+	const patientPaidSum = sum(pPaid);
 
 	const iPaid = appts.map((appt) => {
 		return appt.insurance.balance.paid;
 	});
-	const insurancePaidSum: number = math.sum(iPaid);
+	const insurancePaidSum = sum(iPaid);
 
 	// const patientPaid: TableDataObject = {
 	// 	value: 0,

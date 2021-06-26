@@ -30,6 +30,7 @@ interface _Files {
 interface Files extends _Files {
 	TNBillingStatement: FileType;
 	TSheetsHoursReport: FileType;
+	TSheetsTimesheetReport: FileType;
 	PayrollOptions: FileType;
 	PayrollSummary: FileType;
 	PNCDepositActivity: FileType;
@@ -38,6 +39,7 @@ interface Files extends _Files {
 type SupportedFileType =
 	| 'TNBillingStatement'
 	| 'TSheetsHoursReport'
+	| 'TSheetsTimesheetReport'
 	| 'PayrollOptions'
 	| 'PNCDepositActivity'
 	| 'PayrollSummary';

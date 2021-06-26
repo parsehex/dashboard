@@ -21,7 +21,11 @@ const config = {
 		verifyUpdateCodeSignature: false,
 		signAndEditExecutable: false,
 	},
-	files: ['packages/**/dist/**', 'packages/renderer/help/**'],
+	files: [
+		'packages/**/dist/**',
+		'packages/renderer/help/**',
+		'packages/main/templates/**',
+	],
 	extraMetadata: {
 		version: pkg.version,
 	},

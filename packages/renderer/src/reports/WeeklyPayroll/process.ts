@@ -1,5 +1,6 @@
 import xlsx from 'xlsx';
-import { areNamesEqual, sortByLastName } from '@/lib/utils';
+import { areNamesEqual, isHoliday, sortByLastName } from '@/lib/utils';
+import { parse } from 'date-fns';
 
 export default async function (
 	input: WeeklyPayroll.InputFilesArg
@@ -27,19 +28,24 @@ export default async function (
 		hoursWb.Sheets[hoursWb.SheetNames[0]],
 		{
 			header: [
-				'payroll_id',
-				'type',
-				'hours',
-				'total_seconds',
 				'username',
-				'number',
+				'payroll_id',
 				'fname',
 				'lname',
-				'group_name',
-				'start_date',
-				'end_date',
-				'approved_thru',
-				'submitted_thru',
+				'number',
+				'group',
+				'local_date',
+				'local_day',
+				'local_start_time',
+				'local_end_time',
+				'tz',
+				'hours',
+				'jobcode',
+				'location',
+				'notes',
+				'approved_status',
+				'has_flags',
+				'flag_types',
 			],
 		}
 	);
@@ -78,16 +84,22 @@ export default async function (
 	};
 
 	const findEmp = (Name: string) => {
+		// if (Name.includes('undefined')) debugger;
 		Name = resolveAlias(Name);
 
 		for (const emp of report.Employees) {
 			if (areNamesEqual(Name, emp.Name)) return emp;
 		}
 
+		// TODO remove rate columns
+
 		// if employee can't be found, create one and add it
 		const e: WeeklyPayroll.EmployeeRow = {
 			Name,
+			'IOP Reg Hrs': 0,
 			'Vaca Hrs': 0,
+			'Holiday Rate': 0,
+			'Holiday Hrs': 0,
 			'Admin Hrs': 0,
 			'Admin Rate': 0,
 			'Admin Gross': 0,
@@ -95,7 +107,6 @@ export default async function (
 			'Clin Rate': 0,
 			'Clin Gross': 0,
 			'IOP Rate': 0,
-			'IOP Reg Hrs': 0,
 			'Total Hrs': 0,
 			'Total Gross': 0,
 		};
@@ -131,6 +142,18 @@ export default async function (
 		}
 		return false;
 	};
+	const weeklyPay = (name: string) => {
+		name = resolveAlias(name);
+
+		for (const emp of files.salaried) {
+			if (
+				areNamesEqual(name, emp.Name) &&
+				typeof emp['Weekly Gross'] === 'number'
+			)
+				return emp['Weekly Gross'];
+		}
+		return false;
+	};
 
 	for (const rate of files.rates) {
 		const E = findEmp(rate.Name);
@@ -141,16 +164,28 @@ export default async function (
 		// otherwise use Clin
 		// otherwise use Admin
 		E['IOP Rate'] = rate.IOP ? rate.IOP : rate.Clin || rate.Admin;
+
+		E['Holiday Rate'] = rate.Holiday;
 	}
 
 	for (const hour of files.hours) {
 		const name = hour.fname + ' ' + hour.lname;
 		const E = findEmp(name);
 
-		if (hour.type === 'REG') {
-			E['Admin Hrs'] = hour.hours;
+		// if (hour.type === 'Vacation') {
+		// 	E['Vaca Hrs'] += hour.hours;
+		// } else if (hour.type === 'REG') {
+		// 	E['Admin Hrs'] += hour.hours;
+		// }
+		if (hour.jobcode === 'Vacation') {
+			E['Vaca Hrs'] += hour.hours;
 		} else {
-			E['Vaca Hrs'] = hour.hours;
+			const start = parse(hour.local_start_time, 'L/d/yyyy k:mm', new Date());
+			if (isHoliday(start)) {
+				E['Holiday Hrs'] += hour.hours;
+			} else {
+				E['Admin Hrs'] += hour.hours;
+			}
 		}
 	}
 
@@ -172,7 +207,7 @@ export default async function (
 	}
 
 	for (const E of report.Employees) {
-		if (isSalaried(E.Name)) {
+		if (isSalaried(E.Name) && weeklyPay(E.Name) === false) {
 			E['Admin Hrs'] = Math.max(40 - E['Clin Hrs'], 0);
 		}
 
@@ -182,15 +217,25 @@ export default async function (
 		if (cap !== false && total > cap) total = cap;
 		E['Total Hrs'] = total;
 
-		if (E['Admin Hrs']) {
+		if (E['Admin Hrs'] > 0) {
 			E['Admin Gross'] = E['Admin Hrs'] * E['Admin Rate'];
 		}
-		if (E['Clin Hrs']) {
+		if (E['Clin Hrs'] > 0) {
 			E['Clin Gross'] = E['Clin Hrs'] * E['Clin Rate'];
 		}
 
-		E['Total Gross'] = (E['Clin Gross'] || 0) + (E['Admin Gross'] || 0);
-		if (E['IOP Rate'] > 0) E['Total Gross'] += E['Vaca Hrs'] * E['IOP Rate'];
+		if (weeklyPay(E.Name) !== false) {
+			E['Total Gross'] = weeklyPay(E.Name) as number;
+		} else {
+			E['Total Gross'] = (E['Clin Gross'] || 0) + (E['Admin Gross'] || 0);
+
+			// add vaca hrs
+			if (E['IOP Rate'] > 0) E['Total Gross'] += E['Vaca Hrs'] * E['IOP Rate'];
+			// holiday hrs
+			if (E['Holiday Rate'] > 0 && E['Holiday Hrs'] > 0)
+				E['Total Gross'] += E['Holiday Hrs'] * E['Holiday Rate'];
+		}
+
 		E['IOP Reg Hrs'] = E['Total Gross'] / E['IOP Rate'];
 
 		// tidy up rounding errors

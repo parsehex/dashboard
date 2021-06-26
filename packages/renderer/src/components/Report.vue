@@ -13,7 +13,7 @@
 					title="Open this report folder"
 					@click="openReportFolder()"
 				>
-					<icon type="folder" />
+					Open Folder
 				</btn>
 			</div>
 			<div class="create-report">
@@ -59,6 +59,7 @@
 						:file-name="sheetTitle"
 						:columns="columnDefs"
 						:download-to="reportFolder"
+						:report-type="reportType"
 					/>
 				</div>
 				<div
@@ -106,7 +107,11 @@ export default defineComponent({
 		},
 		processor: {
 			type: Function as PropType<
-				(files: FilesObj, options?: GenericObject) => Promise<GenericObject>
+				(
+					files: FilesObj,
+					options?: GenericObject,
+					reportName?: string
+				) => Promise<GenericObject>
 			>,
 			required: true,
 		},
@@ -161,7 +166,7 @@ export default defineComponent({
 	},
 	computed: {
 		isOnlyCommon() {
-			if (this.requiredFiles.length === 1) return true;
+			// if (this.requiredFiles.length === 1) return true;
 
 			for (const f of this.requiredFiles) {
 				if (!f.common) return false;
@@ -236,7 +241,11 @@ export default defineComponent({
 	},
 	methods: {
 		async go() {
-			this.report = await this.processor(this.files, this.opts);
+			this.report = await this.processor(
+				this.files,
+				this.opts,
+				this.selectedReport
+			);
 			this.sheet = Object.keys(this.report)[0];
 			this.loaded = true;
 		},

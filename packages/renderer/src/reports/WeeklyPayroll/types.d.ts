@@ -1,6 +1,8 @@
 declare namespace WeeklyPayroll {
 	interface EmployeeRow {
 		Name: string;
+		'Holiday Rate': number;
+		'Holiday Hrs': number;
 		'Vaca Hrs': number;
 		'Admin Hrs': number;
 		'Admin Rate': number;
@@ -23,7 +25,7 @@ declare namespace WeeklyPayroll {
 
 	interface InputFiles {
 		billing: TherapyNotesRow[];
-		hours: TSheets.HoursReport[];
+		hours: TSheets.TimesheetReport[];
 		limits: PayrollOptions.HoursLimits[];
 		medicare: PayrollOptions.BillingCounselorOverride[];
 		salaried: PayrollOptions.SalariedEmployees[];

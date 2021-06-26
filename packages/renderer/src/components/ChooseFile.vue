@@ -1,12 +1,19 @@
 <template>
 	<div class="choose-file">
 		<div class="label">
-			<span>{{ fileTypeLabel }}</span>
+			<icon
+				:size="26"
+				:type="iconType"
+				:color="color"
+				:stroke-width="iconStroke"
+			/>
+			<span :class="color">{{ fileTypeLabel }}</span>
 			<help-link
 				v-if="helpPage"
 				:page="helpPage"
 				size="sm"
 				title="Learn more about this file"
+				label="Guide"
 			/>
 		</div>
 		<dropdown :actions="dropdownActions" :btn-label="label" />
@@ -16,10 +23,6 @@
 <script lang="ts">
 import { defineComponent, PropType } from 'vue';
 import { pickFile } from '@/lib/io';
-import {
-	recentlyOpenedFiles,
-	recentlyOpenedFilesClean,
-} from '@/lib/io/file-history';
 import { useElectron } from '@/lib/use-electron';
 import Dropdown from './common/Dropdown.vue';
 import FileTypes from '../../../main/src/file-types';
@@ -57,8 +60,7 @@ export default defineComponent({
 		},
 	},
 	emits: ['pick-file', '404'],
-	data: (props) => ({
-		hist: recentlyOpenedFiles(props.fileType),
+	data: () => ({
 		option: '',
 		fileData: BlankBuffer,
 		fileError: {
@@ -68,6 +70,21 @@ export default defineComponent({
 		},
 	}),
 	computed: {
+		color() {
+			if (this.fileError.shown) return 'red';
+			if (this.option) return 'green';
+			return 'black';
+		},
+		iconType() {
+			if (this.fileError.shown === true) return 'x-square';
+			if (this.option) return 'check-square';
+			return 'square';
+		},
+		iconStroke() {
+			if (this.color === 'black') return 1;
+			return 2.5;
+		},
+
 		helpPage(): string | undefined {
 			return FileTypes.dictionary[this.fileType].help;
 		},
@@ -79,11 +96,12 @@ export default defineComponent({
 		bestFileMatch() {
 			// rank each file option based on heuristics
 			// return best match
-			const results: { file: FileObject; score: number }[] =
-				this.fileHistory.map((file) => ({
+			const results: { file: FileObject; score: number }[] = this.files.map(
+				(file) => ({
 					file,
 					score: +validateFile(this.fileType, file.label),
-				}));
+				})
+			);
 			results.sort((a, b) => b.score - a.score);
 			return results[0]?.score > 0 ? results[0] : undefined;
 		},
@@ -91,13 +109,12 @@ export default defineComponent({
 			// @ts-ignore: vetur error (probably bug)
 			return FileTypes.dictionary[this.fileType].name.print;
 		},
-		fileHistory(): FileObject[] {
+		files(): FileObject[] {
 			let files: string[] = [];
-			if (!this.reportName || this.commonFile) {
-				files = state.dataFiles[this.report].files;
-			} else {
+			if (this.reportName)
 				files = state.dataFiles[this.report][this.reportName];
-			}
+			if (this.commonFile) files = state.dataFiles[this.report].files;
+
 			if (!files) return [];
 
 			const results = files.map((f) => {
@@ -114,11 +131,10 @@ export default defineComponent({
 			return results;
 		},
 		dropdownActions(): DropdownActions {
-			const actions: DropdownActions = this.fileHistory.map((f) => ({
+			const actions: DropdownActions = this.files.map((f) => ({
 				label: f.label,
 				onClick: async () => {
-					this.option = f.value;
-					await this.loadFile();
+					await this.loadFile(f.value);
 					this.emitPick();
 				},
 			}));
@@ -141,31 +157,28 @@ export default defineComponent({
 
 		if (!this.bestFileMatch) return;
 
-		const f = this.bestFileMatch.file;
-		this.option = f.value;
-		await this.loadFile();
-		if (await this.loadFile()) this.emitPick();
+		const loaded = await this.loadFile(this.bestFileMatch.file.value);
+		if (loaded) this.emitPick();
 	},
 	async updated() {
-		if (this.option && this.fileHistory.length === 0) {
+		if (this.option && this.files.length === 0) {
 			this.resetAll();
 			return;
 		}
 
-		const bestMatch = this.bestFileMatch;
-		if (!bestMatch?.file.value || bestMatch.file.value === this.option) return;
+		// const bestMatch = this.bestFileMatch;
+		// if (!bestMatch?.file.value || bestMatch.file.value === this.option) return;
 
-		this.option = bestMatch.file.value;
-
-		if (await this.loadFile()) this.emitPick();
+		// if (await this.loadFile(bestMatch.file.value)) this.emitPick();
 	},
 	methods: {
-		async loadFile() {
+		async loadFile(file: string) {
 			try {
-				this.fileData = await readFile(this.option);
+				this.fileData = await readFile(file);
 				const isCorrectContent = validateFile(this.fileType, this.fileData);
-				// console.log(isCorrectContent);
+				// console.log(isCorrectContent, file, this.fileType, this.fileData);
 				if (!isCorrectContent) throw 'Wrong file type';
+				this.option = file;
 				this.resetError();
 				return true;
 			} catch (e) {
@@ -198,9 +211,6 @@ export default defineComponent({
 		errorWrongFileType() {
 			this.showError('Wrong File Type');
 		},
-		async updateHistory() {
-			this.hist = await recentlyOpenedFilesClean(this.fileType);
-		},
 		fileDestination() {
 			// where the file should go if the user browses for a file
 			const reportName = this.commonFile ? undefined : this.reportName;
@@ -222,12 +232,8 @@ export default defineComponent({
 			await move(pickedFile, dest);
 			pickedFile = dest;
 
-			this.option = pickedFile;
-
-			if (await this.loadFile()) this.emitPick();
+			if (await this.loadFile(pickedFile)) this.emitPick();
 			addToHistory(this.fileType, pickedFile);
-
-			await this.updateHistory();
 		},
 		async pickAndCopyFile() {
 			let pickedFile = await pickFile({
@@ -245,12 +251,8 @@ export default defineComponent({
 			await copy(pickedFile, dest);
 			pickedFile = dest;
 
-			this.option = pickedFile;
-
-			if (await this.loadFile()) this.emitPick();
+			if (await this.loadFile(pickedFile)) this.emitPick();
 			addToHistory(this.fileType, pickedFile);
-
-			await this.updateHistory();
 		},
 
 		emitPick() {
@@ -268,6 +270,7 @@ export default defineComponent({
 
 	.label {
 		display: flex;
+		align-items: center;
 	}
 }
 </style>
