@@ -9,7 +9,7 @@ import { FileFilters } from './file-types';
 import { openHelp } from './help';
 import state from './state';
 import { store } from './store';
-import { cleanObj, cleanStr } from './utils';
+import { cleanObj } from './utils';
 
 export function send(channel: string, ...args: any[]) {
 	state.mainWindow?.webContents.send(channel, ...args);

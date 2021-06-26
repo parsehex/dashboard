@@ -4,6 +4,7 @@ import { newDateFromExcel } from '@/lib/utils';
 
 export default async function (
 	input: WeeklyTransfers.InputFilesArg,
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	{ startDate, endDate }: WeeklyTransfers.InputOptions,
 	reportName: string
 ): Promise<WeeklyTransfers.Report> {
