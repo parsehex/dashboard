@@ -24,31 +24,30 @@ export default async function (
 		billingWb.Sheets[billingWb.SheetNames[0]]
 	);
 
-	files.hours = xlsx.utils.sheet_to_json(
-		hoursWb.Sheets[hoursWb.SheetNames[0]],
-		{
-			header: [
-				'username',
-				'payroll_id',
-				'fname',
-				'lname',
-				'number',
-				'group',
-				'local_date',
-				'local_day',
-				'local_start_time',
-				'local_end_time',
-				'tz',
-				'hours',
-				'jobcode',
-				'location',
-				'notes',
-				'approved_status',
-				'has_flags',
-				'flag_types',
-			],
-		}
-	);
+	files.hours = xlsx.utils.sheet_to_json(hoursWb.Sheets[hoursWb.SheetNames[0]], {
+		header: [
+			'username',
+			'payroll_id',
+			'fname',
+			'lname',
+			'number',
+			'group',
+			'local_date',
+			'local_day',
+			'local_start_time',
+			'local_end_time',
+			'tz',
+			'hours',
+			'jobcode',
+			'location',
+			'notes',
+			'approved_status',
+			'has_flags',
+			'flag_types',
+		],
+	});
+
+	console.log(files.hours);
 
 	// first 2 rows are header, not data
 	files.hours.shift();
@@ -146,10 +145,7 @@ export default async function (
 		name = resolveAlias(name);
 
 		for (const emp of files.salaried) {
-			if (
-				areNamesEqual(name, emp.Name) &&
-				typeof emp['Weekly Gross'] === 'number'
-			)
+			if (areNamesEqual(name, emp.Name) && typeof emp['Weekly Gross'] === 'number')
 				return emp['Weekly Gross'];
 		}
 		return false;

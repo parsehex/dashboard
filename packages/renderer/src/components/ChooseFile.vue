@@ -111,8 +111,7 @@ export default defineComponent({
 		},
 		files(): FileObject[] {
 			let files: string[] = [];
-			if (this.reportName)
-				files = state.dataFiles[this.report][this.reportName];
+			if (this.reportName) files = state.dataFiles[this.report][this.reportName];
 			if (this.commonFile) files = state.dataFiles[this.report].files;
 
 			if (!files) return [];

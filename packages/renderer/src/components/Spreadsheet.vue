@@ -100,12 +100,7 @@ export default defineComponent({
 			const thisData = clone(this.data);
 
 			console.log(thisData);
-			await saveReport(
-				thisData,
-				this.fileName,
-				this.reportType,
-				this.downloadTo
-			);
+			await saveReport(thisData, this.fileName, this.reportType, this.downloadTo);
 		},
 	},
 });
