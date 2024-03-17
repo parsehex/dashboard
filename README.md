@@ -1,3 +1,14 @@
+# Dashboard
+
+This is a poorly-named Electron app that I made for work. It mainly allows creating and viewing reports.
+
+### Features
+
+- **Reports**: Create and view reports.
+- **Charting**: View generated and interactive charts for associated reports.
+- **Data Persistence**: The app maintains a level of data persistence, allowing you to keep your work and progress even after closing the app.
+- **Organized File Management**: Easily swap input files to change the report.
+
 ### Project Structure
 
 The structure of this template is very similar to the structure of a monorepo.
