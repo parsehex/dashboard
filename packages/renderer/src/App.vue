@@ -1,5 +1,5 @@
 <template>
-	<container fluid>
+	<div class="app-container container-fluid">
 		<row>
 			<column class="nav col-2">
 				<app-navigation />
@@ -8,7 +8,7 @@
 				<router-view />
 			</column>
 		</row>
-	</container>
+	</div>
 </template>
 
 <script lang="ts">
@@ -24,6 +24,10 @@ export default defineComponent({
 </script>
 
 <style lang="scss">
+.app-container {
+	padding-top: 10px;
+	padding-bottom: 10px;
+}
 #app {
 	font-family: Avenir, Helvetica, Arial, sans-serif;
 	-webkit-font-smoothing: antialiased;

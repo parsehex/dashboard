@@ -65,7 +65,7 @@ ul.tree-view {
 		padding: 0;
 
 		& > li {
-			margin: 0.5em 0;
+			margin: 0;
 		}
 	}
 	&.branch .branch-label {
