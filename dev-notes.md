@@ -13,6 +13,7 @@ packages\renderer\src\lib\io\index.ts
 
 Can spreadsheet be editable?
 How is Save Charts to PDF supposed to work?
+Where to get icons? -- Feather Icons
 
 ## Improve
 
