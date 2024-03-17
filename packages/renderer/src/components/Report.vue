@@ -278,9 +278,10 @@ export default defineComponent({
 .report {
 	.choose-report {
 		display: flex;
-		justify-content: space-around;
+		justify-content: space-between;
 
 		.select {
+			margin-left: 5em;
 			select {
 				padding: 2px;
 				margin-left: 5px;
@@ -301,8 +302,9 @@ export default defineComponent({
 		flex-direction: row;
 		justify-content: center;
 
-		* {
-			margin: 0 0.3em;
+		& > *,
+		& > .choose-file > .label > * {
+			margin: 0 0.25em;
 		}
 	}
 }
