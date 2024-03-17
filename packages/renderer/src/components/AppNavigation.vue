@@ -29,8 +29,8 @@
 		</div>
 		<div class="version-update m-3">
 			<span class="version mx-1">v{{ version }}</span>
-			<btn class="mx-1" type="info" size="sm" @click="pickDir">
 				<icon type="refresh-cw" />
+			<btn class="mx-1" type="info" size="sm" @click="checkUpdate">
 			</btn>
 			<btn v-if="isUpdateAvailable" class="mx-1" type="success" @click="update">
 				Update now (restarts automatically)
