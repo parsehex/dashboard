@@ -2,7 +2,7 @@
 	<div class="choose-file">
 		<div class="label">
 			<icon
-				:size="26"
+				:size="24"
 				:type="iconType"
 				:color="color"
 				:stroke-width="iconStroke"

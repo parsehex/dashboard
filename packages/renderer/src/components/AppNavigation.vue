@@ -3,7 +3,7 @@
 		<div v-if="dir" class="items">
 			<tree-view :tree="tree" />
 			<btn type="warning" size="sm" @click="reload">
-				<icon type="refresh-cw" />
+				<icon type="refresh-cw" :size="20" />
 			</btn>
 			<help-link size="sm" label="Help" />
 			<btn v-if="pdfCharts.length > 0" type="success">
@@ -22,15 +22,15 @@
 			<div class="input-group-append">
 				<span class="input-group-text">
 					<btn :type="dir ? 'info' : 'primary'" size="sm" @click="pickDir">
-						<icon type="folder-plus" />
+						<icon type="folder-plus" :size="20" />
 					</btn>
 				</span>
 			</div>
 		</div>
 		<div class="version-update m-3">
 			<span class="version mx-1">v{{ version }}</span>
-				<icon type="refresh-cw" />
 			<btn class="mx-1" type="info" size="sm" @click="checkUpdate">
+				<icon type="refresh-cw" :size="20" />
 			</btn>
 			<btn v-if="isUpdateAvailable" class="mx-1" type="success" @click="update">
 				Update now (restarts automatically)
