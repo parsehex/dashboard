@@ -2,10 +2,10 @@
 	<container class="app-nav" fluid>
 		<div v-if="dir" class="items">
 			<tree-view :tree="tree" />
-			<btn type="warning" size="sm" @click="reload">
+			<btn type="warning" size="sm" @click="reload" title="Reload the page">
 				<icon type="refresh-cw" :size="20" />
 			</btn>
-			<help-link size="sm" label="Help" />
+			<help-link size="xs" label="Help" title="Learn how to use this app" />
 			<btn v-if="pdfCharts.length > 0" type="success">
 				Save {{ pdfCharts.length }} Chart{{ pdfCharts.length > 1 ? 's' : '' }}
 				as PDF
@@ -14,6 +14,7 @@
 		<div class="dir input-group mb-3">
 			<input
 				:value="dir"
+				:title="dir"
 				type="text"
 				class="form-control"
 				placeholder="Data folder"
@@ -21,7 +22,12 @@
 			/>
 			<div class="input-group-append">
 				<span class="input-group-text">
-					<btn :type="dir ? 'info' : 'primary'" size="sm" @click="pickDir">
+					<btn
+						:type="dir ? 'info' : 'primary'"
+						size="sm"
+						@click="pickDir"
+						title="Pick a new folder"
+					>
 						<icon type="folder-plus" :size="20" />
 					</btn>
 				</span>
