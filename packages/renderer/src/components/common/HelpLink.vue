@@ -1,5 +1,7 @@
 <template>
-	<btn type="info" :size="size" @click="onclick">{{ label }}</btn>
+	<btn type="info" :size="size" @click="onclick">
+		<icon type="help-circle" :size="20" />
+	</btn>
 </template>
 
 <script lang="ts">
