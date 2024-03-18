@@ -53,11 +53,11 @@ export default defineComponent({
 <style lang="scss">
 ul.tree-view {
 	list-style-type: none;
-	padding-left: 20px;
+	padding-left: 0;
 	display: flex;
 	flex-direction: column;
-	align-items: start;
-	justify-content: start;
+	align-items: center;
+	justify-content: center;
 
 	&:not(.branch) {
 		// root
