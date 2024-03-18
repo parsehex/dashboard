@@ -11,7 +11,7 @@
 			<help-link
 				v-if="helpPage"
 				:page="helpPage"
-				size="sm"
+				size="xs"
 				title="Learn more about this file"
 				label="Guide"
 			/>

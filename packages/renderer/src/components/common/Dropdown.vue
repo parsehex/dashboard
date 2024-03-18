@@ -1,5 +1,5 @@
 <template>
-	<div class="btn-group">
+	<div class="btn-group my-2">
 		<btn
 			:id="btnLabel + '-dropdown'"
 			ref="btn"

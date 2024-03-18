@@ -2,7 +2,7 @@
 	<container class="app-nav" fluid>
 		<div v-if="dir" class="items">
 			<tree-view :tree="tree" />
-			<btn type="warning" size="sm" @click="reload" title="Reload the page">
+			<btn type="warning" size="xs" @click="reload" title="Reload the page">
 				<icon type="refresh-cw" :size="20" />
 			</btn>
 			<help-link size="xs" label="Help" title="Learn how to use this app" />
@@ -24,7 +24,7 @@
 				<span class="input-group-text">
 					<btn
 						:type="dir ? 'info' : 'primary'"
-						size="sm"
+						size="xs"
 						@click="pickDir"
 						title="Pick a new folder"
 					>
@@ -35,7 +35,7 @@
 		</div>
 		<div class="version-update m-3">
 			<span class="version mx-1">v{{ version }}</span>
-			<btn class="mx-1" type="info" size="sm" @click="checkUpdate">
+			<btn class="mx-1" type="info" size="xs" @click="checkUpdate">
 				<icon type="refresh-cw" :size="20" />
 			</btn>
 			<btn v-if="isUpdateAvailable" class="mx-1" type="success" @click="update">
