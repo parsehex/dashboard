@@ -2,14 +2,16 @@
 	<container class="app-nav" fluid>
 		<div v-if="dir" class="items">
 			<tree-view :tree="tree" />
-			<btn type="warning" size="xs" @click="reload" title="Reload the page">
-				<icon type="refresh-cw" :size="20" />
-			</btn>
-			<help-link size="xs" label="Help" title="Learn how to use this app" />
-			<btn v-if="pdfCharts.length > 0" type="success">
-				Save {{ pdfCharts.length }} Chart{{ pdfCharts.length > 1 ? 's' : '' }}
-				as PDF
-			</btn>
+			<div class="mt-2">
+				<btn type="warning" size="xs" @click="reload" title="Reload the page">
+					<icon type="refresh-cw" :size="20" />
+				</btn>
+				<help-link size="xs" label="Help" title="Learn how to use this app" />
+				<btn v-if="pdfCharts.length > 0" type="success">
+					Save {{ pdfCharts.length }} Chart{{ pdfCharts.length > 1 ? 's' : '' }}
+					as PDF
+				</btn>
+			</div>
 		</div>
 		<div class="dir input-group mb-3">
 			<input
