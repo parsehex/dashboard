@@ -9,6 +9,20 @@ This is a poorly-named Electron app that I made for work. It mainly allows creat
 - **Data Persistence**: The app maintains a level of data persistence, allowing you to keep your work and progress even after closing the app.
 - **Organized File Management**: Easily swap input files to change the report.
 
+### Setup
+
+Node v18 is recommended.
+
+#. Clone the repository.
+#. `npm install`
+#. `npm run compile` to make a dev build. Run the app's binary at `./dist/*-unpacked/Dashboard`.
+
+#### GitHub Desktop `npx` Error On Commit
+
+See [here](https://github.com/toplenboren/simple-git-hooks/tree/master#i-am-getting-npx-command-not-found-error-in-a-gui-git-client).
+
+If that doesn't work, go to `./.git/hooks/pre-commit` and comment out the `npx` line.
+
 ### Project Structure
 
 The structure of this template is very similar to the structure of a monorepo.
