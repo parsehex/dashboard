@@ -28,7 +28,7 @@
 						@click="pickDir"
 						title="Pick a new folder"
 					>
-						<icon type="folder-plus" :size="20" />
+						<icon type="folder-plus" :size="20" color="white" />
 					</btn>
 				</span>
 			</div>
@@ -36,7 +36,7 @@
 		<div class="version-update m-3">
 			<span class="version mx-1">v{{ version }}</span>
 			<btn class="mx-1" type="info" size="xs" @click="checkUpdate">
-				<icon type="refresh-cw" :size="20" />
+				<icon type="refresh-cw" :size="20" color="white" />
 			</btn>
 			<btn v-if="isUpdateAvailable" class="mx-1" type="success" @click="update">
 				Update now (restarts automatically)

@@ -16,7 +16,7 @@
 				</li>
 			</ul>
 			<btn type="info" @click.capture="download">
-				<icon type="download" :size="20" />
+				<icon type="download" :size="20" color="white" />
 			</btn>
 		</div>
 	</div>

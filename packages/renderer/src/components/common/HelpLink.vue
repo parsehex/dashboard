@@ -1,6 +1,6 @@
 <template>
 	<btn type="info" :size="size" @click="onclick">
-		<icon type="help-circle" :size="20" />
+		<icon type="help-circle" :size="20" color="white" />
 	</btn>
 </template>
 
