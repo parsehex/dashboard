@@ -62,6 +62,15 @@
 						:report-type="reportType"
 					/>
 				</div>
+				<!-- Had an idea to recreate pivot table functionality -->
+				<!-- <div
+					id="pivot"
+					class="tab-pane"
+					role="tabpanel"
+					aria-labelledby="pivot-tab"
+				>
+					<pivot :report="report" :sheet="sheet" />
+				</div> -->
 				<div
 					v-if="chartPresets"
 					id="chart"
@@ -87,7 +96,7 @@ import { BlankBuffer } from '@/lib/const';
 import state from '@/state';
 import { useElectron } from '@/lib/use-electron';
 import format from 'date-fns/format';
-const { mkdirp, resolveFile, openFolder } = useElectron();
+const { mkdirp, resolveFile, openFolder, on } = useElectron();
 
 interface FilesObj {
 	[f: string]: Buffer;
@@ -238,6 +247,12 @@ export default defineComponent({
 		if (lsVal === null && this.reports.length > 0) {
 			this.selectedReport = this.reports[this.reports.length - 1];
 		}
+
+		on('files', (e, { type, files }) => {
+			// when files in the report folder change, re-run report
+			// (don't try to make it work perfect, only for demo)
+			console.log('files in report folder changed', type, files);
+		});
 	},
 	methods: {
 		async go() {
