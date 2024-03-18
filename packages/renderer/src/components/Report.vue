@@ -1,6 +1,6 @@
 <template>
 	<div class="content report">
-		<div v-if="!isOnlyCommon" class="choose-report mb-1">
+		<div v-if="!isOnlyCommon" class="choose-report mb-2">
 			<div :class="['select', reports.length > 0 ? '' : 'hidden']">
 				<label for="reports">Report:</label>
 				<select id="reports" v-model="selectedReport">
