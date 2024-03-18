@@ -51,7 +51,7 @@ export default async function (
 
 	// first 2 rows are header, not data
 	files.hours.shift();
-	files.hours.shift();
+	// files.hours.shift();
 
 	if (optionsWb.SheetNames.includes('Billing Counselor Override'))
 		files.medicare = xlsx.utils.sheet_to_json(
@@ -197,8 +197,10 @@ export default async function (
 		}
 
 		let hrs = 0;
-		if (appt['Service Code'] === '90832') hrs = 0.5;
-		else if (appt['Service Code']?.indexOf('908') === 0) hrs = 1;
+		let srvCode = appt['Service Code'];
+		if (typeof srvCode !== 'string') srvCode = srvCode + '';
+		if (srvCode === '90832') hrs = 0.5;
+		else if (srvCode?.indexOf('908') === 0) hrs = 1;
 		E['Clin Hrs'] += hrs;
 	}
 
