@@ -138,6 +138,10 @@ export default defineComponent({
 				},
 			}));
 			actions.push({
+				label: '----',
+				onClick: () => {},
+			});
+			actions.push({
 				label: 'Browse & Move file...',
 				onClick: async () => await this.pickAndMoveFile(),
 			});

@@ -20,9 +20,10 @@
 				v-for="a in actions"
 				:key="btnLabel + '-' + a.label"
 				class="dropdown-item"
+				:class="{ 'border-top': a.label === '----' }"
 				@click.prevent="handleClick(a)"
 			>
-				<a href="#">
+				<a href="#" v-if="a.label !== '----'">
 					{{ a.label }}
 				</a>
 			</li>
@@ -55,9 +56,17 @@ export default defineComponent({
 			this.dropdown?.hide();
 		},
 		handleClick(action: DropdownActions[0]) {
-			action.onClick();
-			this.close();
+			if (action.label !== '----') {
+				action.onClick();
+				this.close();
+			}
 		},
 	},
 });
 </script>
+
+<style scoped>
+.border-top {
+	border-top: 1px solid #ccc;
+}
+</style>
