@@ -276,7 +276,7 @@ export default defineComponent({
 			});
 			await mkdirp(p);
 			this.selectedReport = name;
-			this.openReportFolder(p);
+			// this.openReportFolder(p);
 		},
 		async openReportFolder(p = '') {
 			await openFolder(p || this.reportFolder);
