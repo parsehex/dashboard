@@ -1,10 +1,15 @@
 <template>
 	<div class="app-container container-fluid">
 		<row>
-			<column class="nav col-2">
+			<column v-if="$route.path !== '/'" class="nav col-3">
 				<app-navigation />
 			</column>
-			<column class="page col-10">
+			<column
+				:class="{
+					'page col-9': $route.path !== '/',
+					'page col-12': $route.path === '/',
+				}"
+			>
 				<router-view />
 			</column>
 		</row>
