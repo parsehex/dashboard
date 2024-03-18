@@ -25,7 +25,7 @@ export default defineComponent({
 	name: 'TreeView',
 	props: {
 		// eslint-disable-next-line no-undef
-		tree: { type: Object as PropType<TreeView>, required: true },
+		tree: { type: Object as PropType<ITreeView>, required: true },
 		id: {
 			type: String,
 			default: '',
