@@ -1,3 +1,5 @@
 {
-	"vetur.format.defaultFormatter.ts": "eslint"
+	"files.exclude": {
+		"**/.git": false
+	}
 }
