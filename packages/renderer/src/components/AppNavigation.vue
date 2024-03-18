@@ -50,36 +50,12 @@ import { useElectron } from '@/lib/use-electron';
 import state from '@/state';
 import { defineComponent } from 'vue';
 import TreeView from './common/TreeView.vue';
-
-const tree: ITreeView = [
-	{
-		text: 'Reports',
-		id: 'report',
-		children: [
-			{
-				text: 'Weekly Payroll',
-				href: 'payroll',
-			},
-			{
-				text: 'Weekly Transfers',
-				href: 'weekly-transfers',
-			},
-			// {
-			// 	text: 'Payroll Hours Breakdown',
-			// 	href: 'payroll-hours',
-			// },
-			{
-				text: 'Revenue Per Session',
-				href: 'billing-tn',
-			},
-		],
-	},
-];
+import { reportsTree } from '@/lib/reports';
 
 export default defineComponent({
 	name: 'AppNavigation',
 	components: { TreeView },
-	data: () => ({ tree }),
+	data: () => ({ tree: reportsTree }),
 	computed: {
 		pdfCharts: () => state.chartsToExport,
 		dir: () => state.dir,

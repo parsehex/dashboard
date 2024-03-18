@@ -52,7 +52,7 @@ interface ReportFolder {
 interface FilesList {
 	'Weekly Payroll': ReportFolder;
 	'Weekly Transfers': ReportFolder;
-	// 'Payroll Hours Breakdown': ReportFolder;
+	'Payroll Hours Breakdown': ReportFolder;
 	'Revenue Per Session': ReportFolder;
 	[ReportType: string]: ReportFolder;
 }
@@ -60,5 +60,5 @@ interface FilesList {
 type ReportType =
 	| 'Weekly Payroll'
 	| 'Weekly Transfers'
-	// | 'Payroll Hours Breakdown'
+	| 'Payroll Hours Breakdown'
 	| 'Revenue Per Session';
