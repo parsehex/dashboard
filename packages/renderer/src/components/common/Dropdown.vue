@@ -1,9 +1,9 @@
 <template>
-	<div class="btn-group my-2">
+	<div class="btn-group mt-1 mb-2">
 		<btn
 			:id="btnLabel + '-dropdown'"
 			ref="btn"
-			class="dropdown-toggle"
+			class="dropdown-toggle px-1 py-0"
 			type="secondary"
 			data-bs-toggle="dropdown"
 			aria-expanded="false"
