@@ -1,6 +1,6 @@
-# Dashboard
+# MCC Dashboard
 
-This is a poorly-named Electron app that I made for work. It mainly allows creating and viewing reports.
+This is an Electron app that I made for work. It mainly allows creating and viewing reports.
 
 ### Features
 
