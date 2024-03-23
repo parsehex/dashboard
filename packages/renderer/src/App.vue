@@ -29,6 +29,9 @@ export default defineComponent({
 </script>
 
 <style lang="scss">
+button.rounded {
+	border-radius: 1rem !important;
+}
 .app-container {
 	padding-top: 10px;
 	padding-bottom: 10px;

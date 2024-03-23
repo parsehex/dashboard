@@ -1,6 +1,7 @@
 <template>
-	<btn type="info" :size="size" @click="onclick">
-		<icon type="help-circle" :size="20" color="white" />
+	<btn type="info" :class="label ? '' : 'rounded'" :size="size" @click="onclick">
+		<span v-if="label">{{ label }}</span>
+		<icon v-else type="help-circle" :size="20" color="white" />
 	</btn>
 </template>
 
@@ -19,7 +20,6 @@ export default defineComponent({
 		},
 		label: {
 			type: String,
-			default: '?',
 		},
 		size: {
 			type: String as PropType<'' | 'sm' | 'lg' | 'xs'>,
@@ -36,7 +36,6 @@ export default defineComponent({
 
 <style scoped>
 button {
-	border-radius: 50%;
 	transition: background-color 0.3s;
 }
 button:hover {

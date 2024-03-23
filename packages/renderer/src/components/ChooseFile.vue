@@ -13,7 +13,6 @@
 				:page="helpPage"
 				size="xs"
 				title="Learn more about this file"
-				label="Guide"
 			/>
 		</div>
 		<dropdown :actions="dropdownActions" :btn-label="label" />
