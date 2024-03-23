@@ -1,6 +1,6 @@
 <template>
 	<div class="content report">
-		<div v-if="!isOnlyCommon" class="choose-report">
+		<div v-if="!isOnlyCommon" class="choose-report mb-2">
 			<div :class="['select', reports.length > 0 ? '' : 'hidden']">
 				<label for="reports">Report:</label>
 				<select id="reports" v-model="selectedReport">
@@ -62,6 +62,15 @@
 						:report-type="reportType"
 					/>
 				</div>
+				<!-- Had an idea to recreate pivot table functionality -->
+				<!-- <div
+					id="pivot"
+					class="tab-pane"
+					role="tabpanel"
+					aria-labelledby="pivot-tab"
+				>
+					<pivot :report="report" :sheet="sheet" />
+				</div> -->
 				<div
 					v-if="chartPresets"
 					id="chart"
@@ -87,7 +96,7 @@ import { BlankBuffer } from '@/lib/const';
 import state from '@/state';
 import { useElectron } from '@/lib/use-electron';
 import format from 'date-fns/format';
-const { mkdirp, resolveFile, openFolder } = useElectron();
+const { mkdirp, resolveFile, openFolder, on } = useElectron();
 
 interface FilesObj {
 	[f: string]: Buffer;
@@ -238,6 +247,12 @@ export default defineComponent({
 		if (lsVal === null && this.reports.length > 0) {
 			this.selectedReport = this.reports[this.reports.length - 1];
 		}
+
+		on('files', (e, { type, files }) => {
+			// when files in the report folder change, re-run report
+			// (don't try to make it work perfect, only for demo)
+			console.log('files in report folder changed', type, files);
+		});
 	},
 	methods: {
 		async go() {
@@ -261,7 +276,7 @@ export default defineComponent({
 			});
 			await mkdirp(p);
 			this.selectedReport = name;
-			this.openReportFolder(p);
+			// this.openReportFolder(p);
 		},
 		async openReportFolder(p = '') {
 			await openFolder(p || this.reportFolder);
@@ -278,9 +293,10 @@ export default defineComponent({
 .report {
 	.choose-report {
 		display: flex;
-		justify-content: space-around;
+		justify-content: space-between;
 
 		.select {
+			margin-left: 5em;
 			select {
 				padding: 2px;
 				margin-left: 5px;
@@ -299,10 +315,12 @@ export default defineComponent({
 	.files {
 		display: flex;
 		flex-direction: row;
+		flex-wrap: wrap;
 		justify-content: center;
 
-		* {
-			margin: 0 0.3em;
+		& > *,
+		& > .choose-file > .label > * {
+			margin: 0 0.25em;
 		}
 	}
 }

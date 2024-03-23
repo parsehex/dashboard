@@ -2,7 +2,7 @@
 	<div class="choose-file">
 		<div class="label">
 			<icon
-				:size="26"
+				:size="24"
 				:type="iconType"
 				:color="color"
 				:stroke-width="iconStroke"
@@ -11,7 +11,7 @@
 			<help-link
 				v-if="helpPage"
 				:page="helpPage"
-				size="sm"
+				size="xs"
 				title="Learn more about this file"
 				label="Guide"
 			/>
@@ -111,8 +111,7 @@ export default defineComponent({
 		},
 		files(): FileObject[] {
 			let files: string[] = [];
-			if (this.reportName)
-				files = state.dataFiles[this.report][this.reportName];
+			if (this.reportName) files = state.dataFiles[this.report][this.reportName];
 			if (this.commonFile) files = state.dataFiles[this.report].files;
 
 			if (!files) return [];
@@ -138,6 +137,10 @@ export default defineComponent({
 					this.emitPick();
 				},
 			}));
+			actions.push({
+				label: '----',
+				onClick: () => {},
+			});
 			actions.push({
 				label: 'Browse & Move file...',
 				onClick: async () => await this.pickAndMoveFile(),

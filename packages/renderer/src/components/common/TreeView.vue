@@ -25,7 +25,7 @@ export default defineComponent({
 	name: 'TreeView',
 	props: {
 		// eslint-disable-next-line no-undef
-		tree: { type: Object as PropType<TreeView>, required: true },
+		tree: { type: Object as PropType<ITreeView>, required: true },
 		id: {
 			type: String,
 			default: '',
@@ -53,11 +53,11 @@ export default defineComponent({
 <style lang="scss">
 ul.tree-view {
 	list-style-type: none;
-	padding-left: 20px;
+	padding-left: 0;
 	display: flex;
 	flex-direction: column;
-	align-items: start;
-	justify-content: start;
+	align-items: center;
+	justify-content: center;
 
 	&:not(.branch) {
 		// root
@@ -65,7 +65,7 @@ ul.tree-view {
 		padding: 0;
 
 		& > li {
-			margin: 0.5em 0;
+			margin: 0;
 		}
 	}
 	&.branch .branch-label {

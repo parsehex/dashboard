@@ -1,9 +1,9 @@
 <template>
-	<div class="btn-group">
+	<div class="btn-group mt-1 mb-2">
 		<btn
 			:id="btnLabel + '-dropdown'"
 			ref="btn"
-			class="dropdown-toggle"
+			class="dropdown-toggle px-1 py-0"
 			type="secondary"
 			data-bs-toggle="dropdown"
 			aria-expanded="false"
@@ -20,9 +20,10 @@
 				v-for="a in actions"
 				:key="btnLabel + '-' + a.label"
 				class="dropdown-item"
+				:class="{ 'border-top': a.label === '----' }"
 				@click.prevent="handleClick(a)"
 			>
-				<a href="#">
+				<a href="#" v-if="a.label !== '----'">
 					{{ a.label }}
 				</a>
 			</li>
@@ -55,9 +56,17 @@ export default defineComponent({
 			this.dropdown?.hide();
 		},
 		handleClick(action: DropdownActions[0]) {
-			action.onClick();
-			this.close();
+			if (action.label !== '----') {
+				action.onClick();
+				this.close();
+			}
 		},
 	},
 });
 </script>
+
+<style scoped>
+.border-top {
+	border-top: 1px solid #ccc;
+}
+</style>

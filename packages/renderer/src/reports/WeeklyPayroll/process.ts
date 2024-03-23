@@ -24,35 +24,34 @@ export default async function (
 		billingWb.Sheets[billingWb.SheetNames[0]]
 	);
 
-	files.hours = xlsx.utils.sheet_to_json(
-		hoursWb.Sheets[hoursWb.SheetNames[0]],
-		{
-			header: [
-				'username',
-				'payroll_id',
-				'fname',
-				'lname',
-				'number',
-				'group',
-				'local_date',
-				'local_day',
-				'local_start_time',
-				'local_end_time',
-				'tz',
-				'hours',
-				'jobcode',
-				'location',
-				'notes',
-				'approved_status',
-				'has_flags',
-				'flag_types',
-			],
-		}
-	);
+	files.hours = xlsx.utils.sheet_to_json(hoursWb.Sheets[hoursWb.SheetNames[0]], {
+		header: [
+			'username',
+			'payroll_id',
+			'fname',
+			'lname',
+			'number',
+			'group',
+			'local_date',
+			'local_day',
+			'local_start_time',
+			'local_end_time',
+			'tz',
+			'hours',
+			'jobcode',
+			'location',
+			'notes',
+			'approved_status',
+			'has_flags',
+			'flag_types',
+		],
+	});
+
+	console.log(files.hours);
 
 	// first 2 rows are header, not data
 	files.hours.shift();
-	files.hours.shift();
+	// files.hours.shift();
 
 	if (optionsWb.SheetNames.includes('Billing Counselor Override'))
 		files.medicare = xlsx.utils.sheet_to_json(
@@ -146,10 +145,7 @@ export default async function (
 		name = resolveAlias(name);
 
 		for (const emp of files.salaried) {
-			if (
-				areNamesEqual(name, emp.Name) &&
-				typeof emp['Weekly Gross'] === 'number'
-			)
+			if (areNamesEqual(name, emp.Name) && typeof emp['Weekly Gross'] === 'number')
 				return emp['Weekly Gross'];
 		}
 		return false;
@@ -201,8 +197,10 @@ export default async function (
 		}
 
 		let hrs = 0;
-		if (appt['Service Code'] === '90832') hrs = 0.5;
-		else if (appt['Service Code']?.indexOf('908') === 0) hrs = 1;
+		let srvCode = appt['Service Code'];
+		if (typeof srvCode !== 'string') srvCode = srvCode + '';
+		if (srvCode === '90832') hrs = 0.5;
+		else if (srvCode?.indexOf('908') === 0) hrs = 1;
 		E['Clin Hrs'] += hrs;
 	}
 

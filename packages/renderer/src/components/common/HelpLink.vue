@@ -1,5 +1,7 @@
 <template>
-	<btn type="info" :size="size" @click="onclick">{{ label }}</btn>
+	<btn type="info" :size="size" @click="onclick">
+		<icon type="help-circle" :size="20" color="white" />
+	</btn>
 </template>
 
 <script lang="ts">
@@ -31,3 +33,13 @@ export default defineComponent({
 	},
 });
 </script>
+
+<style scoped>
+button {
+	border-radius: 50%;
+	transition: background-color 0.3s;
+}
+button:hover {
+	background-color: #007bff;
+}
+</style>

@@ -1,14 +1,19 @@
 <template>
-	<container fluid>
+	<div class="app-container container-fluid">
 		<row>
-			<column class="nav col-2">
+			<column v-if="$route.path !== '/'" class="nav col-3">
 				<app-navigation />
 			</column>
-			<column class="page col-10">
+			<column
+				:class="{
+					'page col-9': $route.path !== '/',
+					'page col-12': $route.path === '/',
+				}"
+			>
 				<router-view />
 			</column>
 		</row>
-	</container>
+	</div>
 </template>
 
 <script lang="ts">
@@ -24,6 +29,10 @@ export default defineComponent({
 </script>
 
 <style lang="scss">
+.app-container {
+	padding-top: 10px;
+	padding-bottom: 10px;
+}
 #app {
 	font-family: Avenir, Helvetica, Arial, sans-serif;
 	-webkit-font-smoothing: antialiased;
@@ -56,7 +65,7 @@ export default defineComponent({
 
 .btn-group-xs > .btn,
 .btn-xs {
-	padding: 0.25rem 0.4rem;
+	padding: 0.05rem;
 	font-size: 0.875rem;
 	line-height: 0.5;
 	border-radius: 0.2rem;

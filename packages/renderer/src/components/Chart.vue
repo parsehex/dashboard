@@ -132,7 +132,7 @@ export default defineComponent({
 			if (this.chart) this.chart.destroy();
 
 			const canvas = this.$refs['chart'] as HTMLCanvasElement;
-			canvas.style.minHeight = '400px';
+			canvas.style.maxHeight = '400px';
 			// canvas.style.maxHeight = '100%';
 			const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
 
@@ -147,7 +147,7 @@ export default defineComponent({
 				type: type,
 				data: this.chartData.data,
 				options: {
-					responsive: true,
+					// responsive: true,
 				},
 			};
 			if (stacked) {
@@ -193,7 +193,7 @@ function randomColor() {
 
 <style lang="scss">
 .chart-container {
-	max-height: 50vh;
+	max-height: 25vh;
 	position: relative;
 	// border: 1px solid;
 	// border-radius: 3px;

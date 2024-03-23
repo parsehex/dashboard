@@ -2,18 +2,21 @@
 	<container class="app-nav" fluid>
 		<div v-if="dir" class="items">
 			<tree-view :tree="tree" />
-			<btn type="warning" size="sm" @click="reload">
-				<icon type="refresh-cw" />
-			</btn>
-			<help-link size="sm" label="Help" />
-			<btn v-if="pdfCharts.length > 0" type="success">
-				Save {{ pdfCharts.length }} Chart{{ pdfCharts.length > 1 ? 's' : '' }}
-				as PDF
-			</btn>
+			<div class="mt-2">
+				<btn type="warning" size="xs" @click="reload" title="Reload the page">
+					<icon type="refresh-cw" :size="20" />
+				</btn>
+				<help-link size="xs" label="Help" title="Learn how to use this app" />
+				<btn v-if="pdfCharts.length > 0" type="success">
+					Save {{ pdfCharts.length }} Chart{{ pdfCharts.length > 1 ? 's' : '' }}
+					as PDF
+				</btn>
+			</div>
 		</div>
 		<div class="dir input-group mb-3">
 			<input
 				:value="dir"
+				:title="dir"
 				type="text"
 				class="form-control"
 				placeholder="Data folder"
@@ -21,16 +24,21 @@
 			/>
 			<div class="input-group-append">
 				<span class="input-group-text">
-					<btn :type="dir ? 'info' : 'primary'" size="sm" @click="pickDir">
-						<icon type="folder-plus" />
+					<btn
+						:type="dir ? 'info' : 'primary'"
+						size="xs"
+						@click="pickDir"
+						title="Pick a new folder"
+					>
+						<icon type="folder-plus" :size="20" color="white" />
 					</btn>
 				</span>
 			</div>
 		</div>
 		<div class="version-update m-3">
 			<span class="version mx-1">v{{ version }}</span>
-			<btn class="mx-1" type="info" size="sm" @click="pickDir">
-				<icon type="refresh-cw" />
+			<btn class="mx-1" type="info" size="xs" @click="checkUpdate">
+				<icon type="refresh-cw" :size="20" color="white" />
 			</btn>
 			<btn v-if="isUpdateAvailable" class="mx-1" type="success" @click="update">
 				Update now (restarts automatically)
@@ -44,36 +52,12 @@ import { useElectron } from '@/lib/use-electron';
 import state from '@/state';
 import { defineComponent } from 'vue';
 import TreeView from './common/TreeView.vue';
-
-const tree: ITreeView = [
-	{
-		text: 'Reports',
-		id: 'report',
-		children: [
-			{
-				text: 'Weekly Payroll',
-				href: 'payroll',
-			},
-			{
-				text: 'Weekly Transfers',
-				href: 'weekly-transfers',
-			},
-			// {
-			// 	text: 'Payroll Hours Breakdown',
-			// 	href: 'payroll-hours',
-			// },
-			{
-				text: 'Revenue Per Session',
-				href: 'billing-tn',
-			},
-		],
-	},
-];
+import { reportsTree } from '@/lib/reports';
 
 export default defineComponent({
 	name: 'AppNavigation',
 	components: { TreeView },
-	data: () => ({ tree }),
+	data: () => ({ tree: reportsTree }),
 	computed: {
 		pdfCharts: () => state.chartsToExport,
 		dir: () => state.dir,

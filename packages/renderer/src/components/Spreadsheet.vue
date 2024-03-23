@@ -16,7 +16,7 @@
 				</li>
 			</ul>
 			<btn type="info" @click.capture="download">
-				<icon type="download" :size="18" />
+				<icon type="download" :size="20" color="white" />
 			</btn>
 		</div>
 	</div>
@@ -100,12 +100,7 @@ export default defineComponent({
 			const thisData = clone(this.data);
 
 			console.log(thisData);
-			await saveReport(
-				thisData,
-				this.fileName,
-				this.reportType,
-				this.downloadTo
-			);
+			await saveReport(thisData, this.fileName, this.reportType, this.downloadTo);
 		},
 	},
 });
