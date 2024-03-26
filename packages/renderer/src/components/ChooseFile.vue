@@ -168,10 +168,10 @@ export default defineComponent({
 			return;
 		}
 
-		// const bestMatch = this.bestFileMatch;
-		// if (!bestMatch?.file.value || bestMatch.file.value === this.option) return;
+		const bestMatch = this.bestFileMatch;
+		if (!bestMatch?.file.value || bestMatch.file.value === this.option) return;
 
-		// if (await this.loadFile(bestMatch.file.value)) this.emitPick();
+		if (await this.loadFile(bestMatch.file.value)) this.emitPick();
 	},
 	methods: {
 		async loadFile(file: string) {
