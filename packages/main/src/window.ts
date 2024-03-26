@@ -21,17 +21,19 @@ export async function createWindow({ key, page }: CreateWindowOptions) {
 
 	state[key] = new BrowserWindow({
 		show: true,
-		width: winSettings.width,
-		height: winSettings.height,
-		x: winSettings.x,
-		y: winSettings.y,
+		width: 950,
+		height: 500,
+		// width: winSettings.width,
+		// height: winSettings.height,
+		// x: winSettings.x,
+		// y: winSettings.y,
 		webPreferences: {
 			preload: join(__dirname, '../../preload/dist/index.cjs'),
 			contextIsolation: env.MODE !== 'test', // Spectron tests can't work with contextIsolation: true
 			enableRemoteModule: true, // Spectron tests can't work with enableRemoteModule: false
 		},
 	});
-	if (winSettings.maximized) state[key]?.maximize();
+	// if (winSettings.maximized) state[key]?.maximize();
 
 	if (env.MODE === 'development') {
 		state[key]?.webContents.once('dom-ready', () =>
