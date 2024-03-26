@@ -296,14 +296,14 @@ export default defineComponent({
 		justify-content: space-between;
 
 		.select {
-			margin-left: 5em;
+			// margin-left: 5em;
 			select {
 				padding: 2px;
 				margin-left: 5px;
 			}
 		}
 		.create-report {
-			margin-left: 5em;
+			// margin-left: 5em;
 		}
 	}
 	.opts {
