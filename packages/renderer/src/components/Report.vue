@@ -17,7 +17,7 @@
 				</btn>
 			</div>
 			<div class="create-report">
-				<btn class="mx-1" type="success" @click="create">Create New Report</btn>
+				<btn class="mx-1" type="success" @click="create">New Report</btn>
 			</div>
 		</div>
 		<div v-if="optionDefs" class="opts">

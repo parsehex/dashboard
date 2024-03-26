@@ -1,7 +1,7 @@
 const dictionary: Files = {
 	TNBillingStatement: {
 		name: {
-			print: 'TherapyNotes Billing Transactions',
+			print: 'Billing Transactions',
 			file: 'TN_Billing_Statement',
 			key: 'TNBillingStatement',
 		},
@@ -9,7 +9,7 @@ const dictionary: Files = {
 	},
 	TSheetsHoursReport: {
 		name: {
-			print: 'TSheets Hours Report',
+			print: 'Hours Report',
 			file: 'TSheets_Hours_Report',
 			key: 'TSheetsHoursReport',
 		},
@@ -17,7 +17,7 @@ const dictionary: Files = {
 	},
 	TSheetsTimesheetReport: {
 		name: {
-			print: 'TSheets Timesheet Report',
+			print: 'Timesheet Report',
 			file: 'TSheets_Timesheet_Report',
 			key: 'TSheetsTimesheetReport',
 		},
