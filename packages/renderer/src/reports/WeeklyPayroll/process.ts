@@ -247,5 +247,15 @@ export default async function (
 	report.Employees.sort((a, b) => sortByLastName(a.Name, b.Name));
 	console.groupEnd();
 
+	// remove columns: Holiday Hrs, Admin Gross, Clin Gross
+	for (const emp of report.Employees) {
+		// @ts-ignore
+		delete emp['Holiday Hrs'];
+		// @ts-ignore
+		delete emp['Admin Gross'];
+		// @ts-ignore
+		delete emp['Clin Gross'];
+	}
+
 	return report;
 }
