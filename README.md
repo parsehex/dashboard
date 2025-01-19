@@ -1,4 +1,4 @@
-# MCC Dashboard
+# Data Dashboard
 
 This is an Electron app that I made for work. It mainly allows creating and viewing reports.
 
